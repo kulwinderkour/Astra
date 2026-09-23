@@ -1,0 +1,72 @@
+Build a clean, premium, elegant website for ASTRA Drones & Robotics Solutions Pvt. Ltd. (brand: ASTRA DROBOTICS). Style reference: airforce.com (U.S. Air Force). NOT futuristic, NOT neon, NOT sci-fi, no glowing HUD graphics, no glassmorphism, no gradients as decoration. Think disciplined, confident, military-institutional: big full-bleed video, deep navy and white sections, bold condensed uppercase headings, square outlined buttons, generous whitespace, large photography with simple labels under it.
+
+TECH: React + Vite + Tailwind. Single landing page with smooth anchor scrolling. Fully responsive (mobile first), keyboard accessible, respects prefers-reduced-motion.
+
+DESIGN TOKENS
+- Colors: Navy #0F1D30 (primary dark), Deep navy #091321 (footer, ticker), Panel #1A2A40 (cards on navy), White #FFFFFF, Mist #EEF1F4 (light sections), Steel #5E6A78 (muted text), Saffron #E8731C (brand accent, use sparingly: small rules, primary CTA, hover underlines), Sand #B9A88A (small spec labels).
+- Fonts (Google Fonts): "Barlow Condensed" 600/700 for all headings, nav and buttons (uppercase, slight letter-spacing). "Barlow" 400/500 for body. "Tiro Devanagari Sanskrit" for the Sanskrit motto.
+- Buttons: square corners, 2px outline, uppercase condensed text. Primary CTA = solid saffron. No rounded pill buttons, no arrow icons in button text.
+- Motion: only ONE orchestrated moment (the hero motto reveal). No fade-up on every section. Subtle image zoom (1.04) on hover for product/tiles only.
+
+MOTTO (must appear in the hero and the footer):
+राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।
+"Indigenous technology is the source of national strength"
+
+PAGE STRUCTURE (top to bottom)
+
+1. ANNOUNCEMENT TICKER (thin deep-navy bar, infinite horizontal marquee, small saffron diamond separators):
+"SET UP A DRONE LAB • ADVANCE FPV - KAMIKAZE DRONES • CALL US ON +91 6239663762"
+
+2. HEADER: transparent over the hero, becomes solid navy after scrolling past the hero. Left: logo image + wordmark "ASTRA" with small "DROBOTICS". Right: nav links Segments, Products, Interceptor, Drone Lab, About + outlined button "Call +91 62396 63762" (tel link). Mobile: hamburger opening a full-width navy menu.
+
+3. HERO (full viewport height): background = the uploaded drone landing video (hero-landing.mp4), muted, playsInline, object-fit cover, with a soft navy gradient overlay (darker top and bottom). Play the video ONCE (no loop); it is a drone landing on sand — when it finishes, hold on the last frame. At ~2.6 seconds (as the drone touches down) fade in the Sanskrit motto dead centre in large white Tiro Devanagari (clamp 34px–84px), then the English line beneath it in uppercase Barlow Condensed with a short saffron line on each side. Bottom-left: small circular outlined replay button. Bottom-centre: "Explore ASTRA" with a circular chevron that scrolls to the next section. If autoplay is blocked or reduced motion is on, show the poster frame with the motto already visible.
+
+4. MISSION BAND (navy, centred text, logo mark above): "ASTRA Drones & Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support."
+
+5. OUR SEGMENTS (navy, 2 cards on #1A2A40 panels, image on top, like airforce.com's Civilian Service / Auxiliary cards):
+- Defence — "Combat-ready UAV platforms for tactical and strategic missions." Button: See defence systems
+- Commercial — "Surveillance, mapping and inspection for enterprises." Button: See commercial systems
+
+6. OUR FLEET (white section, 4-column grid → 2 on tablet/mobile, tall 4:5 photos with label below, like airforce.com's careers row):
+FPV Drone — High-speed, agile, low-latency
+Unjamable Drone — Secure, jam-resistant, long-range
+Logistics Drone — Heavy-lift, autonomous, reliable
+Surveillance Drone — Day and night reconnaissance with real-time intelligence
+Kamikaze Drone — Precision strike with autonomous navigation
+VTOL Drone — Vertical take-off, long range, ideal for mapping and ISR
+Fiber Optic Drone — Unbroken, high-bandwidth link for critical missions
+Training Drone — Durable, crash-resistant, indoor and outdoor use
+Below grid: "Need custom battery packs or a mission-specific build? Talk to our engineers."
+
+7. INTERCEPTOR FEATURE (50/50 split: photo left full-bleed, navy text right): heading "Interceptor Drone", lead "A vertical-launch counter-UAV platform built to find, track and neutralise hostile drones." 2x2 spec list with thin dividers: Role: Counter-UAV operations / Handling: High agility and speed / Guidance: Real-time target tracking / Build: Designed and made in India. Saffron button "Request a briefing". Use the uploaded interceptor photo.
+
+8. SET UP A DRONE LAB (mist background, text left, tall photo right): "We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them." Checklist: Lab design, equipment and installation / Hands-on workshops and FPV flight training / Curriculum for build, code and fly / Ongoing technical support. Button "Plan your lab".
+
+9. REWARD & RECOGNITION (white, 2 columns, 16:9 photo, small saffron tag, title, text):
+- 2026 — Startup Punjab Conclave: "The Chief Minister of Punjab appreciated ASTRA for indigenous innovation and excellence in UAV technology."
+- Indian Army — Workshop and delivery: "ASTRA ran a drone workshop and delivered high-performance drones to the Indian Army."
+
+10. THREE LARGE PHOTO TILES (like airforce.com's Mission / Education / How to Join): tall full-bleed images, text top-left over a dark top gradient: "Who we are / Our Mission", "Learn to build and fly / Training", "Work with us / Contact".
+
+11. CONTACT BAND (navy): "Talk to ASTRA" + "For product briefings, drone labs or custom builds, call or write to us." Large links: +91 62396 63762, astradrobotics@gmail.com, address: 307, Top Floor, Visvesvaraya Block, Indian Institute of Technology Ropar, Rupnagar, Punjab 140001.
+
+12. FOOTER (deep navy): ASTRA wordmark, Sanskrit motto, one-line about text. Columns: Quick Links (About Us, Our Segments, Products), Segments (Defence Drones, Commercial Drones, Drone Lab), Get in Touch (phone, email). Bottom row: "© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved." + Privacy, Terms.
+
+IMAGES: Every image lives in /public/assets/images/ with these exact filenames. If a file is missing, render a striped placeholder box showing "Upload: <filename>" so I can see where each image goes:
+logo.png, hero-poster.jpg, segment-defence.jpg, segment-commercial.jpg, product-fpv.jpg, product-unjamable.jpg, product-logistics.jpg, product-surveillance.jpg, product-kamikaze.jpg, product-vtol.jpg, product-fiber-optic.jpg, product-training.jpg, interceptor.jpg, drone-lab.jpg, award-startup-punjab.jpg, award-indian-army.jpg, tile-mission.jpg, tile-training.jpg, tile-contact.jpg
+Video: /public/assets/videos/hero-landing.mp4
+
+EXPORT-READY BUILD (IMPORTANT — I may run out of credits):
+- Build in this priority order and make sure the site runs after EACH step: (1) header, ticker, hero video + motto, footer; (2) mission, segments, fleet; (3) interceptor, drone lab, recognition; (4) tiles, contact, polish.
+- Generate the COMPLETE, final code in the first pass — no "TODO", no "rest of the code here", no stub components.
+- Keep a standard, self-contained Vite project so I can download it as a ZIP and run it anywhere: package.json with all dependencies, vite.config, tailwind config, index.html, src/ (App.jsx, components/, index.css), public/assets/images/ and public/assets/videos/. No platform-specific packages, no external APIs, no backend, no environment variables.
+- Add a README.md in the root with: npm install, npm run dev, npm run build, and the full list of image filenames and which section each one fills.
+- When the build is complete, tell me it is ready to export and remind me to download the full project as a ZIP.
+
+
+EXPORT-READY BUILD (IMPORTANT — I may run out of credits):
+- Build in this priority order and make sure the site runs after EACH step: (1) header, ticker, hero video + motto, footer; (2) mission, segments, fleet; (3) interceptor, drone lab, recognition; (4) tiles, contact, polish.
+- Generate the COMPLETE, final code in the first pass — no "TODO", no "rest of the code here", no stub components.
+- Keep a standard, self-contained Vite project so I can download it as a ZIP and run it anywhere: package.json with all dependencies, vite.config, tailwind config, index.html, src/ (App.jsx, components/, index.css), public/assets/images/ and public/assets/videos/. No platform-specific packages, no external APIs, no backend, no environment variables.
+- Add a README.md in the root with: npm install, npm run dev, npm run build, and the full list of image filenames and which section each one fills.
+- When the build is complete, tell me it is ready to export and remind me to download the full project as a ZIP.

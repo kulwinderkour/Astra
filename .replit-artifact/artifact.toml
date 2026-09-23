@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ASTRA Drobotics"
+description = "A premium single-page website for ASTRA Drones & Robotics Solutions, an Indian deep-tech company building Made-in-India UAVs and robotics systems for defence, disaster response, surveillance, industry, and education."
+version = "1.0.0"
+id = "artifacts/astra-drobotics"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22462
+
+[services.development]
+run = "pnpm --filter @workspace/astra-drobotics run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/astra-drobotics", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/astra-drobotics/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22462"
+BASE_PATH = "/"
