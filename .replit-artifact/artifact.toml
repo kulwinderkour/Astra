@@ -12,10 +12,10 @@ paths = [ "/" ]
 localPort = 22462
 
 [services.development]
-run = "pnpm --filter @workspace/astra-drobotics run dev"
+run = "npm run dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/astra-drobotics", "run", "build" ]
+build = [ "npm", "run", "build" ]
 serve = "static"
 publicDir = "artifacts/astra-drobotics/dist/public"
 
