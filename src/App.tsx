@@ -56,15 +56,15 @@ function AssetImage({ file, alt, className = '' }: { file: string; alt: string; 
   );
 }
 
-function SectionHeading({ eyebrow, title, intro, light = false }: { eyebrow: string; title: ReactNode; intro?: string; light?: boolean }) {
+function SectionHeading({ eyebrow, title, intro }: { eyebrow: string; title: ReactNode; intro?: string; light?: boolean }) {
   return (
     <div className="section-heading">
       <div className="section-heading-row">
         <div>
           <span className="eyebrow">{eyebrow}</span>
-          <h2 className="section-title" style={light ? { color: 'var(--white)' } : undefined}>{title}</h2>
+          <h2 className="section-title">{title}</h2>
         </div>
-        {intro ? <p className="section-intro" style={light ? { color: 'rgba(255,255,255,.68)' } : undefined}>{intro}</p> : null}
+        {intro ? <p className="section-intro">{intro}</p> : null}
       </div>
     </div>
   );
@@ -144,9 +144,9 @@ function Hero() {
       <div className="hero-poster" style={{ backgroundImage: `url(/assets/images/${imageFiles.poster})` }} aria-hidden="true" />
       <video ref={videoRef} className="hero-video" muted playsInline preload="auto" poster={`/assets/images/${imageFiles.poster}`} onEnded={() => setEnded(true)} aria-label="ASTRA drone landing"><source src="/assets/videos/hero-landing.mp4" type="video/mp4" /></video>
       <div className="hero-scrim" aria-hidden="true" />
-      <span className="hero-label">INDIGENOUS SYSTEMS / FIELD READY</span>
       <div className="hero-content">
         <div className={`motto-lockup ${visible ? 'is-visible' : ''}`}>
+          <h1 className="motto-brand">ASTRA DROBOTICS</h1>
           <p className="motto-sanskrit">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</p>
           <p className="motto-translation"><span>Indigenous technology is the source of national strength</span></p>
         </div>
