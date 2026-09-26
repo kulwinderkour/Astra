@@ -28,7 +28,7 @@ All image references point to `/public/assets/images/` and intentionally preserv
 
 | Filename | Section / use |
 | --- | --- |
-| `logo.png` | Header and footer brand mark |
+| `logo1.png` | Header and footer brand mark, browser tab icon |
 | `hero-poster.jpg` | Hero poster and reduced-motion fallback |
 | `segment-defence.jpg` | Our Segments — Defence |
 | `segment-commercial.jpg` | Our Segments — Commercial |
@@ -54,6 +54,6 @@ All image references point to `/public/assets/images/` and intentionally preserv
 - Header navigation uses semantic anchors and becomes a solid navy bar after the hero.
 - The mobile menu is keyboard reachable and closes when a destination is selected.
 - The hero video is muted, inline, non-looping, and holds its final frame. Its motto reveals at approximately 2.6 seconds, with autoplay failure and `prefers-reduced-motion` falling back to an immediately visible motto.
-- The circular replay control restarts the video and the `Explore ASTRA` control moves to the mission band.
+- The circular replay control restarts the video and the `Scroll down` control in the lower right moves to the mission band.
 - Product imagery uses a restrained 1.04 hover zoom only on image tiles.
 - All phone, email, briefing, lab, segment and fleet calls-to-action are wired to real page anchors or telephone/email links.

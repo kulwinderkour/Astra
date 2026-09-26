@@ -8,7 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 const queryClient = new QueryClient();
 
 const imageFiles = {
-  logo: 'logo.png',
+  logo: 'logo1.png',
   poster: 'hero-poster.jpg',
   defence: 'segment-defence.jpg',
   commercial: 'segment-commercial.jpg',
@@ -70,21 +70,6 @@ function SectionHeading({ eyebrow, title, intro, light = false }: { eyebrow: str
   );
 }
 
-function Ticker() {
-  const items = ['SET UP A DRONE LAB', 'ADVANCE FPV — KAMIKAZE DRONES', 'CALL US ON +91 6239663762'];
-  return (
-    <div className="ticker" aria-label="ASTRA announcements">
-      <div className="ticker-track">
-        {[...items, ...items].map((item, index) => (
-          <span className="ticker-item" key={`${item}-${index}`}>
-            <span>{item}</span><span className="diamond" aria-hidden="true" />
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function Header({ scrolled }: { scrolled: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = [['Segments', '#segments'], ['Products', '#fleet'], ['Interceptor', '#interceptor'], ['Drone Lab', '#drone-lab'], ['About', '#about']];
@@ -95,12 +80,14 @@ function Header({ scrolled }: { scrolled: boolean }) {
         <div className="container header-inner">
           <a className="brand" href="#top" onClick={closeMenu} data-testid="link-brand">
             <AssetImage file={imageFiles.logo} alt="ASTRA logo" className="brand-mark" />
-            <span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span>
+            <span className="brand-lockup">
+              <span className="brand-name">ASTRA</span>
+              <span className="brand-sub">DRONES AND ROBOTICS<br />SOLUTIONS PVT. LTD.</span>
+            </span>
           </a>
           <nav className="primary-nav" aria-label="Primary navigation">
             {nav.map(([label, href]) => <a href={href} key={href} data-testid={`link-nav-${label.toLowerCase().replace(' ', '-')}`}>{label}</a>)}
           </nav>
-          <a className="header-cta" href="tel:+916239663762" data-testid="link-header-call">Call +91 62396 63762</a>
           <button className="menu-button" type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen(!menuOpen)} data-testid="button-mobile-menu">
             {menuOpen ? <X /> : <Menu />}
           </button>
@@ -109,7 +96,6 @@ function Header({ scrolled }: { scrolled: boolean }) {
       {menuOpen ? (
         <nav id="mobile-navigation" className="mobile-menu" aria-label="Mobile navigation">
           {nav.map(([label, href]) => <a href={href} onClick={closeMenu} key={href} data-testid={`link-mobile-${label.toLowerCase().replace(' ', '-')}`}>{label}</a>)}
-          <a className="mobile-call" href="tel:+916239663762" onClick={closeMenu} data-testid="link-mobile-call">Call +91 62396 63762</a>
         </nav>
       ) : null}
     </>
@@ -166,7 +152,7 @@ function Hero() {
         </div>
       </div>
       <button className="hero-replay" type="button" onClick={replay} aria-label={ended ? 'Replay hero video' : 'Restart hero video'} data-testid="button-hero-replay"><RotateCcw /></button>
-      <a className="explore-link" href="#mission" data-testid="link-explore"><span>Explore ASTRA <ChevronDown /></span></a>
+      <a className="explore-link" href="#mission" data-testid="link-explore">Scroll down <ChevronDown /></a>
     </section>
   );
 }
@@ -276,7 +262,7 @@ function LandingPage() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  return <div className="astra-page"><Ticker /><Header scrolled={scrolled} /><main><Hero /><section className="mission-band" id="mission"><div className="container"><span className="mission-mark" aria-hidden="true" /><p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p></div></section><Segments /><Fleet /><Interceptor /><DroneLab /><Recognition /><StoryTiles /><Contact /></main><Footer /></div>;
+  return <div className="astra-page"><Header scrolled={scrolled} /><main><Hero /><section className="mission-band" id="mission"><div className="container"><span className="mission-mark" aria-hidden="true" /><p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p></div></section><Segments /><Fleet /><Interceptor /><DroneLab /><Recognition /><StoryTiles /><Contact /></main><Footer /></div>;
 }
 
 function App() {
