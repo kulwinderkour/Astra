@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ChevronDown, Check, Mail, MapPin, Menu, Phone, RotateCcw, X } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { DroneShowcase } from '@/components/drone-showcase';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
@@ -262,7 +263,7 @@ function LandingPage() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  return <div className="astra-page"><Header scrolled={scrolled} /><main><Hero /><section className="mission-band" id="mission"><div className="container"><span className="mission-mark" aria-hidden="true" /><p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p></div></section><Segments /><Fleet /><Interceptor /><DroneLab /><Recognition /><StoryTiles /><Contact /></main><Footer /></div>;
+  return <div className="astra-page"><Header scrolled={scrolled} /><main><Hero /><section className="mission-band" id="mission"><div className="container"><span className="mission-mark" aria-hidden="true" /><p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p></div></section><DroneShowcase /><Segments /><Fleet /><Interceptor /><DroneLab /><Recognition /><StoryTiles /><Contact /></main><Footer /></div>;
 }
 
 function App() {
