@@ -11,6 +11,8 @@ const DroneShowcase = lazy(() =>
   import('@/components/drone-showcase').then((m) => ({ default: m.DroneShowcase })),
 );
 import { ProofEditorial } from '@/components/proof-editorial';
+import { DroneLab } from '@/components/drone-lab';
+import { Fleet } from '@/components/fleet-section';
 
 /**
  * Canonical image manifest. Every filename here resolves to
@@ -29,77 +31,7 @@ const imageFiles = {
   contact: 'tile-contact.jpg',
 } as const;
 
-/**
- * The eight fleet platforms, in catalogue order. Each image lives in
- * public/assets/images/fleet/ and is a 1584x993 source re-encoded to WebP.
- * `tag` is the technical category shown over the image.
- */
-const fleet = [
-  {
-    number: '01',
-    tag: 'Tactical FPV',
-    name: 'FPV Drone',
-    detail: 'High-speed, agile, low-latency tactical platform.',
-    image: 'fleet/fleet-fpv.webp',
-    alt: 'ASTRA tactical FPV drone on a ridge at golden hour',
-  },
-  {
-    number: '02',
-    tag: 'Anti-jam EW',
-    name: 'Unjamable Drone',
-    detail: 'Secure, jam-resistant, long-range navigation.',
-    image: 'fleet/fleet-unjamable.webp',
-    alt: 'ASTRA jam-resistant hexacopter over an alpine ridge',
-  },
-  {
-    number: '03',
-    tag: 'Heavy Payload',
-    name: 'Logistics Drone',
-    detail: 'Heavy-lift, autonomous payload delivery system.',
-    image: 'fleet/fleet-logistics.webp',
-    alt: 'ASTRA logistics drone carrying a cargo crate over mountains',
-  },
-  {
-    number: '04',
-    tag: 'Tactical ISR',
-    name: 'Surveillance Drone',
-    detail: 'Day and night reconnaissance with real-time feeds.',
-    image: 'fleet/fleet-surveillance.webp',
-    alt: 'ASTRA fixed-wing surveillance UAV over a mountain valley',
-  },
-  {
-    number: '05',
-    tag: 'Precision Strike',
-    name: 'Kamikaze Drone',
-    detail: 'Precision strike with autonomous navigation.',
-    image: 'fleet/fleet-kamikaze.webp',
-    alt: 'ASTRA loitering munition on its launch platform at sunset',
-  },
-  {
-    number: '06',
-    tag: 'Hybrid VTOL',
-    name: 'VTOL Drone',
-    detail: 'Vertical take-off, long range, ideal for mapping and ISR.',
-    image: 'fleet/fleet-vtol.webp',
-    alt: 'ASTRA fixed-wing VTOL aircraft on a runway at sunset',
-  },
-  {
-    number: '07',
-    tag: 'Secure Fiber',
-    name: 'Fiber Optic Drone',
-    detail: 'Unbroken, high-bandwidth link for critical missions.',
-    image: 'fleet/fleet-fiber-optic.webp',
-    alt: 'ASTRA drone deploying a fiber-optic spool at sunset',
-  },
-  {
-    number: '08',
-    tag: 'Pilot Training',
-    name: 'Training Drone',
-    detail: 'Durable, crash-resistant, indoor and outdoor use.',
-    image: 'fleet/fleet-training.webp',
-    alt: 'ASTRA training drones and controllers on a bench',
-  },
-] as const;
+
 
 /**
  * Renders an image from the asset manifest. If the file is absent or fails to
@@ -254,52 +186,39 @@ function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [visible, setVisible] = useState(false);
   const [ended, setEnded] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  // The hero film is a 1.3 MB decorative layer. On small screens and on
-  // metered connections the poster alone carries the section, so the video is
-  // never fetched there.
-  const [useVideo, setUseVideo] = useState(false);
+  const [useVideo, setUseVideo] = useState(true);
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const wide = window.matchMedia('(min-width: 768px)');
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    const update = () => {
-      setReducedMotion(motion.matches);
-      setUseVideo(wide.matches && !motion.matches && !connection?.saveData);
-    };
-    update();
-    motion.addEventListener('change', update);
-    wide.addEventListener('change', update);
-    return () => {
-      motion.removeEventListener('change', update);
-      wide.removeEventListener('change', update);
-    };
-  }, []);
+    const shouldVideo = wide.matches && !motion.matches && !connection?.saveData;
+    setUseVideo(shouldVideo);
 
-  useEffect(() => {
-    if (!useVideo) {
-      setVisible(true);
-      videoRef.current?.pause();
-      return;
-    }
-    const timer = window.setTimeout(() => setVisible(true), 2600);
     const video = videoRef.current;
     if (video) {
-      video.currentTime = 0;
-      video.play()?.catch(() => setVisible(true));
+      video.defaultMuted = true;
+      video.muted = true;
+      void video.play().catch(() => {});
     }
+
+    // Strictly reveal all hero texts only after 3.0s
+    const timer = window.setTimeout(() => {
+      setVisible(true);
+    }, 3000);
+
     return () => window.clearTimeout(timer);
-  }, [useVideo]);
+  }, []);
 
   const replay = () => {
     const video = videoRef.current;
     setEnded(false);
-    if (!video || !useVideo) return;
     setVisible(false);
-    video.currentTime = 0;
-    void video.play().catch(() => setVisible(true));
-    window.setTimeout(() => setVisible(true), 2600);
+    if (video) {
+      video.currentTime = 0;
+      void video.play().catch(() => {});
+    }
+    window.setTimeout(() => setVisible(true), 3000);
   };
 
   return (
@@ -309,9 +228,10 @@ function Hero() {
         <video
           ref={videoRef}
           className="hero-video"
+          autoPlay
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster={`/assets/images/${imageFiles.poster}`}
           onEnded={() => setEnded(true)}
           aria-hidden="true"
@@ -321,11 +241,15 @@ function Hero() {
         </video>
       ) : null}
       <div className="hero-scrim" aria-hidden="true" />
-      <span className="hero-label" aria-hidden="true">INDIGENOUS SYSTEMS / FIELD READY</span>
+      <span className={`hero-label ${visible ? 'is-visible' : ''}`} aria-hidden="true">INDIGENOUS SYSTEMS / FIELD READY</span>
       <div className="hero-content">
         <div className={`motto-lockup ${visible ? 'is-visible' : ''}`}>
-          <h1 className="motto-sanskrit" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</h1>
-          <p className="motto-translation"><span>Indigenous technology is the source of national strength</span></p>
+          <h1 className="motto-sanskrit" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम् ।</h1>
+          <div className="motto-subline">
+            <span className="motto-subline-line" aria-hidden="true" />
+            <span className="motto-subline-text">INDIGENOUS TECHNOLOGY IS THE SOURCE OF NATIONAL STRENGTH</span>
+            <span className="motto-subline-line" aria-hidden="true" />
+          </div>
         </div>
       </div>
       {useVideo ? (
@@ -338,127 +262,87 @@ function Hero() {
   );
 }
 
-function Fleet() {
-  return (
-    <section className="fleet" id="fleet" aria-labelledby="fleet-title">
-      <div className="fleet-backdrop" aria-hidden="true" />
-      <div className="container">
-        <div className="fleet-heading">
-          <div className="fleet-heading-main">
-            <span className="eyebrow">Our fleet</span>
-            <h2 className="section-title" id="fleet-title">Mission <em>ready.</em></h2>
-          </div>
-          <p className="fleet-intro">
-            A modular family of platforms designed, assembled, tested and supported in India.
-          </p>
-          <p className="fleet-strap" aria-hidden="true">
-            Indigenous technology<br />for a stronger, safer India.
-          </p>
-        </div>
 
-        <ul className="fleet-grid">
-          {fleet.map((platform, index) => (
-            <li
-              key={platform.name}
-              className="fleet-card"
-              style={{ '--stagger': `${(index % 4) * 70 + Math.floor(index / 4) * 110}ms` } as React.CSSProperties}
-              data-testid={`card-fleet-${platform.name.toLowerCase().replaceAll(' ', '-')}`}
-            >
-              <a className="fleet-card-link" href="#contact" aria-label={`${platform.name} — enquire`}>
-                <div className="fleet-card-media">
-                  <AssetImage file={platform.image} alt={platform.alt} />
-                  <span className="fleet-tag">{platform.tag}</span>
-                </div>
-                <div className="fleet-card-body">
-                  <span className="fleet-number" aria-hidden="true">{platform.number}</span>
-                  <div className="fleet-card-text">
-                    <h3>{platform.name}</h3>
-                    <p>{platform.detail}</p>
-                  </div>
-                  <span className="fleet-arrow" aria-hidden="true">
-                    <ArrowRight />
-                  </span>
-                </div>
-              </a>
-            </li>
-          ))}
-        </ul>
-
-        <div className="fleet-callout">
-          <p className="fleet-callout-lead">Need a mission-specific platform?</p>
-          <p className="fleet-callout-detail">
-            Custom configurations, payloads and support for defence, security and research missions.
-          </p>
-          <a className="fleet-callout-action" href="#contact" data-testid="link-talk-engineers">
-            Talk to our engineers <ArrowRight aria-hidden="true" />
-          </a>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Interceptor() {
-  const specs = [['Role', 'Counter-UAV operations'], ['Handling', 'High agility and speed'], ['Guidance', 'Real-time target tracking'], ['Build', 'Designed and made in India']];
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      video.pause();
+      return;
+    }
+
+    video.defaultMuted = true;
+    video.muted = true;
+    void video.play().catch(() => {});
+  }, []);
+
+  const specs = [
+    ['Role', 'Counter-UAV operations'],
+    ['Handling', 'High agility and speed'],
+    ['Guidance', 'Real-time target tracking'],
+    ['Build', 'Designed and made in India'],
+  ];
+
   return (
     <section className="interceptor" id="interceptor" aria-labelledby="interceptor-title">
-      <div className="image-frame interceptor-image"><AssetImage file={imageFiles.interceptor} alt="The ASTRA Interceptor counter-UAV platform" /></div>
+      <div className="interceptor-image">
+        <video
+          ref={videoRef}
+          className="interceptor-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label="ASTRA Interceptor drone flight demonstration"
+        >
+          <source src="/assets/video/interceptor.mp4" type="video/mp4" />
+          <source src="/assets/videos/interceptor.mp4" type="video/mp4" />
+        </video>
+
+        {/* Diagonal texture overlay */}
+        <div className="interceptor-video-overlay" aria-hidden="true" />
+        {/* Soft dark transition gradient toward right content panel */}
+        <div className="interceptor-video-gradient" aria-hidden="true" />
+
+        {/* Technical corner brackets (all four corners) */}
+        <span className="interceptor-corner interceptor-corner-tl" aria-hidden="true" />
+        <span className="interceptor-corner interceptor-corner-tr" aria-hidden="true" />
+        <span className="interceptor-corner interceptor-corner-bl" aria-hidden="true" />
+        <span className="interceptor-corner interceptor-corner-br" aria-hidden="true" />
+
+        {/* Live flight test label in bottom-left */}
+        <div className="interceptor-badge" aria-hidden="true">
+          <span className="interceptor-badge-line" />
+          <span>INTERCEPTOR // FLIGHT TEST</span>
+        </div>
+      </div>
+
       <div className="interceptor-copy">
-        <span className="eyebrow">Featured platform</span><h2 className="section-title" id="interceptor-title">Interceptor <em>Drone</em></h2>
+        <span className="eyebrow">Featured platform</span>
+        <h2 className="section-title" id="interceptor-title">Interceptor <em>Drone</em></h2>
         <p className="lead">A vertical-launch counter-UAV platform built to find, track and neutralise hostile drones.</p>
-        <dl className="spec-grid">{specs.map(([label, value]) => <div className="spec" key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+        <dl className="spec-grid">
+          {specs.map(([label, value]) => (
+            <div className="spec" key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
         <a className="button-primary" href="#contact" data-testid="link-request-briefing">Request a briefing</a>
       </div>
     </section>
   );
 }
 
-function DroneLab() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      video.defaultMuted = true;
-      video.muted = true;
-      void video.play().catch(() => {});
-    }
-  }, []);
 
-  const items = [
-    'Lab design, equipment and installation',
-    'Hands-on workshops and FPV flight training',
-    'Curriculum for build, code and fly',
-    'Ongoing technical support'
-  ];
-  return (
-    <section className="lab" id="drone-lab" aria-labelledby="lab-title">
-      <div className="lab-copy">
-        <span className="eyebrow">Institutional capability</span>
-        <h2 className="section-title" id="lab-title">Set up a <em>drone lab.</em></h2>
-        <p>We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.</p>
-        <ul className="checklist">
-          {items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}
-        </ul>
-        <a className="button-primary" href="#contact" data-testid="link-plan-lab">Plan your lab</a>
-      </div>
-      <div className="image-frame lab-image">
-        <video
-          ref={videoRef}
-          className="lab-video"
-          autoPlay
-          muted
-          playsInline
-          loop
-          preload="auto"
-          aria-label="ASTRA drone lab demonstration"
-        >
-          <source src="/assets/videos/labvideo.mp4" type="video/mp4" />
-        </video>
-        <div className="lab-video-overlay" aria-hidden="true" />
-      </div>
-    </section>
-  );
-}
 
 function Footer() {
   return (
