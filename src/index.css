@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -63,6 +62,26 @@
 }
 
 .astra-page { overflow: clip; }
+/* The header is fixed at 82px (92px >=1080px) once past the hero, so anchor
+   targets reserve that much room. #top is excluded: it is the page origin. */
+#mission, #aerial-systems, #segments, #fleet, #interceptor, #drone-lab, #about, #contact {
+  scroll-margin-top: 92px;
+}
+.skip-link {
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 50%;
+  padding: 12px 22px;
+  color: var(--white);
+  background: var(--saffron);
+  font: 700 12px/1 var(--app-font-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  transform: translate(-50%, -110%);
+  transition: transform .18s ease;
+}
+.skip-link:focus-visible { transform: translate(-50%, 0); }
 .container {
   width: min(100% - 40px, 1240px);
   margin-inline: auto;
@@ -133,15 +152,10 @@
   width: 52px;
   height: 52px;
   min-height: 52px;
-  padding: 5px;
-  border: 1px dashed rgba(255,255,255,.55);
-  color: rgba(255,255,255,.72);
   background-color: transparent;
-  filter: none;
-  font-size: 7px;
-  letter-spacing: .04em;
-  line-height: 1.15;
+  background-image: none;
 }
+.brand .asset-placeholder::after { width: 26px; }
 .brand-lockup { display: grid; gap: 4px; line-height: .95; min-width: 0; }
 .brand-name { font: 700 clamp(16px, 3.4vw, 24px)/1 var(--app-font-mono); letter-spacing: .08em; }
 .brand-sub { color: rgba(255,255,255,.72); font: 600 clamp(7px, 1.6vw, 9px)/1.35 var(--app-font-mono); letter-spacing: .1em; }
@@ -150,6 +164,9 @@
 .primary-nav a { position: relative; padding: 31px 0; color: rgba(255,255,255,.82); }
 .primary-nav a::after { content: ''; position: absolute; right: 0; bottom: 23px; left: 0; height: 2px; background: var(--saffron); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
 .primary-nav a:hover::after, .primary-nav a:focus-visible::after { transform: scaleX(1); }
+.primary-nav a.is-active { color: var(--white); }
+.primary-nav a.is-active::after { transform: scaleX(1); }
+.mobile-menu a.is-active { color: var(--saffron); }
 .menu-button { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.55); color: var(--white); background: transparent; cursor: pointer; }
 .menu-button svg { width: 20px; height: 20px; }
 .mobile-menu { position: fixed; z-index: 35; inset: 82px 0 auto; display: grid; max-height: calc(100dvh - 82px); overflow-y: auto; padding: 22px 20px 30px; background: var(--navy); border-top: 1px solid rgba(255,255,255,.14); }
@@ -165,7 +182,6 @@
 }
 .hero-video, .hero-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero-poster { background: var(--navy); background-size: cover; background-position: center; }
-.hero-poster::before { content: 'Upload: hero-poster.jpg'; position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; color: rgba(255,255,255,.52); background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 1px, transparent 1px 14px); font: 600 12px/1.3 var(--app-font-mono); letter-spacing: .12em; text-align: center; text-transform: uppercase; }
 .hero-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(9,19,33,.82) 0%, rgba(15,29,48,.18) 45%, rgba(9,19,33,.94) 100%); }
 .hero-content { position: relative; z-index: 2; display: grid; min-height: max(700px, 100dvh); place-items: center; padding: 160px 20px 120px; text-align: center; }
 .motto-lockup { max-width: 1000px; opacity: 0; transform: translateY(12px); }
@@ -186,48 +202,490 @@
 .mission-mark { display: block; width: 34px; height: 34px; margin: 0 auto 24px; border: 2px solid var(--saffron); transform: rotate(45deg); }
 .mission-band p { max-width: 880px; margin: 0 auto; color: rgba(255,255,255,.84); font-size: clamp(20px, 2.25vw, 30px); line-height: 1.35; }
 
-.segments { padding: 100px 0 120px; background: var(--navy); color: var(--white); }
-.segments .section-title { color: var(--white); }
-.segment-grid { display: grid; gap: 18px; }
-.segment-card { background: var(--panel); }
+/* ── SEGMENTS · BUILT FOR CONSEQUENCE ──────────────────────────────────────
+   A layered cinematic stage. Every class here is prefixed .seg-* and scoped to
+   this section; nothing below is shared with other sections.               */
+.seg-fallback { min-height: 100svh; background: var(--deep-navy); }
+@media (prefers-reduced-motion: reduce) { .seg-fallback { min-height: 100svh; } }
+
+.segments {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding: 150px 0 120px;
+  background: var(--deep-navy);
+  color: var(--white);
+  isolation: isolate;
+  overflow: clip;
+}
+
+/* Layer 0–4: the environment. Pointer-inert, hidden from assistive tech. */
+.seg-stage {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  /* One shared viewpoint. Every layer below rotates within it, so their
+     rotations resolve against the same vanishing point instead of each
+     spinning about its own centre. */
+  perspective: 1500px;
+  perspective-origin: 52% 46%;
+  pointer-events: none;
+}
+.seg-plate {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* Source art is 1554x1012. Holding that exact ratio and sizing to cover means
+   the HUD children can use the image's own coordinates and stay locked to the
+   hologram at any viewport aspect. */
+/* Cover, while staying ratio-locked. Two minimums plus aspect-ratio grow the
+   box until it fills the stage on either axis, so the HUD's percentage
+   coordinates stay valid at every viewport shape. */
+.seg-plate-box {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  aspect-ratio: 1554 / 1012;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.seg-plate-img {
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/images/segments/segments-hangar.webp');
+  background-size: 100% 100%;
+}
+/* Readability without flattening the art: dark at the edges, open in the middle. */
+.seg-atmosphere {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(9,19,33,.78) 0%, rgba(9,19,33,.1) 30%, rgba(9,19,33,.2) 58%, rgba(9,19,33,.9) 100%),
+    linear-gradient(90deg, rgba(9,19,33,.86) 0%, rgba(9,19,33,.1) 46%, transparent 72%, rgba(9,19,33,.5) 100%);
+}
+.seg-gridlines {
+  position: absolute;
+  inset: -4%;
+  opacity: .5;
+  background:
+    repeating-linear-gradient(90deg, rgba(150,180,220,.05) 0 1px, transparent 1px 104px),
+    repeating-linear-gradient(0deg, rgba(150,180,220,.05) 0 1px, transparent 1px 104px);
+  mask-image: radial-gradient(70% 58% at 52% 44%, #000 0%, transparent 78%);
+}
+.seg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(80% 66% at 52% 50%, transparent 48%, rgba(4,9,17,.62) 100%);
+}
+
+/* Technical projection, registered over the platform in the hangar plate. */
+.seg-hud {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+/* Centred on the holographic drone in the source art. */
+.seg-hud-inner {
+  position: absolute;
+  top: 51.4%;
+  left: 51.5%;
+  width: 34%;
+  aspect-ratio: 1.42;
+  translate: -50% -50%;
+  will-change: transform;
+}
+.seg-hud-ring,
+.seg-hud-ring.is-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 1px solid rgba(232,115,28,.34);
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+.seg-hud-ring {
+  width: 72%;
+  aspect-ratio: 1;
+  border-style: dashed;
+  animation: seg-spin 46s linear infinite;
+}
+.seg-hud-ring.is-outer {
+  width: 104%;
+  aspect-ratio: 1;
+  border-color: rgba(120,165,215,.18);
+  animation: seg-spin 78s linear infinite reverse;
+}
+@keyframes seg-spin { to { rotate: 360deg; } }
+
+.seg-hud-scan {
+  position: absolute;
+  right: -2%;
+  left: -2%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,115,28,.55) 50%, transparent);
+  animation: seg-scan 7.5s cubic-bezier(.45,0,.55,1) infinite;
+}
+@keyframes seg-scan {
+  0%, 100% { top: 8%; opacity: 0; }
+  12%      { opacity: .95; }
+  50%      { top: 92%; opacity: .95; }
+  88%      { opacity: 0; }
+}
+.seg-hud-bracket {
+  position: absolute;
+  width: clamp(16px, 1.6vw, 26px);
+  height: clamp(16px, 1.6vw, 26px);
+  border: 1px solid rgba(232,115,28,.62);
+}
+.seg-hud-bracket.is-tl { top: -6%;  left: -4%;  border-right: 0; border-bottom: 0; }
+.seg-hud-bracket.is-tr { top: -6%;  right: -4%; border-left: 0;  border-bottom: 0; }
+.seg-hud-bracket.is-bl { bottom: -6%; left: -4%;  border-right: 0; border-top: 0; }
+.seg-hud-bracket.is-br { bottom: -6%; right: -4%; border-left: 0;  border-top: 0; }
+.seg-hud-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  translate: -50% -50%;
+}
+.seg-hud-crosshair::before,
+.seg-hud-crosshair::after {
+  position: absolute;
+  content: '';
+  background: rgba(232,115,28,.55);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+.seg-hud-crosshair::before { width: 16px; height: 1px; }
+.seg-hud-crosshair::after { width: 1px; height: 16px; }
+
+/* Specification callouts flanking the projection. */
+/* Callouts sit over busy, bright hangar detail, so each carries its own
+   darkened backing rather than relying on the art staying dark behind it. */
+.seg-spec {
+  position: absolute;
+  display: none;
+  margin: 0;
+  padding: 10px 14px;
+  list-style: none;
+  color: rgba(255,255,255,.9);
+  background: rgba(6,12,22,.52);
+  backdrop-filter: blur(6px);
+  font: 600 10px/1.95 var(--app-font-mono);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0,0,0,.75);
+}
+.seg-spec.is-right {
+  top: 27%;
+  right: 6%;
+  padding-left: 14px;
+  border-left: 2px solid rgba(232,115,28,.8);
+}
+.seg-spec.is-left {
+  top: 54%;
+  right: 6%;
+  color: rgba(255,186,122,.95);
+  border-left: 2px solid rgba(232,115,28,.5);
+}
+
+/* Content sits above the stage. */
+.seg-content { position: relative; z-index: 2; perspective: 1500px; perspective-origin: 52% 46%; }
+.seg-heading-rig { transform-style: preserve-3d; will-change: transform; }
+.seg-heading { max-width: 560px; will-change: transform; }
+.seg-heading .section-title {
+  margin-top: 14px;
+  color: var(--white);
+  font-size: clamp(46px, 7.2vw, 96px);
+  line-height: .88;
+}
+.seg-heading .section-title em { color: var(--saffron); font-style: normal; }
+.seg-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  margin-top: 30px;
+  padding: 15px 26px;
+  border: 1px solid var(--saffron);
+  color: var(--saffron);
+  font: 700 12px/1 var(--app-font-mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  transition: color .3s ease, background-color .3s ease;
+}
+.seg-cta svg { width: 15px; height: 15px; transition: transform .3s ease; }
+.seg-cta:hover, .seg-cta:focus-visible { color: var(--white); background: var(--saffron); }
+.seg-cta:hover svg { transform: translateX(4px); }
+
+.seg-lede {
+  max-width: 430px;
+  margin: 22px 0 0;
+  color: rgba(255,255,255,.72);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* Cards sit below the projection, as engineered panels. */
+@media (min-width: 768px) {
+  .seg-spec { display: block; }
+}
+@media (min-width: 1080px) {
+}
+@media (min-width: 768px) and (max-width: 1079px) {
+}
+@media (min-width: 1080px) {
+  .segments { padding: 170px 0 140px; min-height: 104svh; }
+}
+
+/* Reduced motion: the composition stays, the movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  .seg-hud-ring, .seg-hud-ring.is-outer, .seg-hud-scan { animation: none; }
+  .seg-hud-scan { top: 50%; opacity: .5; }
+}
+
 .image-frame { position: relative; overflow: hidden; background: #d8dde2; }
-.segment-image { aspect-ratio: 16/10; }
 .asset-image { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .55s cubic-bezier(.2,.7,.2,1); }
 .image-frame:hover .asset-image { transform: scale(1.04); }
+/* Shown only when an image is absent or fails to decode. Neutral, on-brand and
+   text-free: never expose a filename or any developer-facing string here. */
 .asset-placeholder {
+  position: relative;
   display: grid;
   place-items: center;
   width: 100%;
   height: 100%;
   min-height: 100%;
-  padding: 20px;
-  color: rgba(15,29,48,.7);
-  background-color: #e7eaed;
-  background-image: repeating-linear-gradient(135deg, rgba(15,29,48,.1) 0 1px, transparent 1px 12px);
-  font: 600 13px/1.3 var(--app-font-mono);
-  letter-spacing: .1em;
-  text-align: center;
-  text-transform: uppercase;
+  background-color: var(--panel);
+  background-image:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 1px, transparent 1px 14px);
 }
-.segment-copy { padding: 26px 28px 30px; }
-.segment-copy h3 { margin: 0 0 8px; font: 700 32px/1 var(--app-font-mono); text-transform: uppercase; }
-.segment-copy p { min-height: 50px; margin: 0 0 25px; color: rgba(255,255,255,.7); }
+.asset-placeholder::after {
+  content: '';
+  width: clamp(26px, 9%, 46px);
+  aspect-ratio: 1;
+  border: 2px solid rgba(232,115,28,.5);
+  transform: rotate(45deg);
+}
 .outline-link, .button-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 13px 18px; border: 2px solid currentColor; font: 700 12px/1 var(--app-font-mono); letter-spacing: .13em; text-transform: uppercase; transition: color .2s ease, background-color .2s ease, border-color .2s ease; }
 .outline-link:hover, .outline-link:focus-visible { border-color: var(--saffron); color: var(--saffron); }
 .button-primary { border-color: var(--saffron); color: var(--white); background: var(--saffron); cursor: pointer; }
 .button-primary:hover, .button-primary:focus-visible { border-color: var(--white); background: var(--navy); }
 
-.fleet { padding: 104px 0 116px; background: var(--white); }
-.fleet-heading { display: flex; flex-direction: column; gap: 24px; }
-.fleet-heading .section-title { color: var(--navy); }
-.fleet-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 34px 14px; }
-.fleet-image { aspect-ratio: 4/5; }
-.fleet-label { padding-top: 15px; }
-.fleet-label h3 { margin: 0 0 5px; color: var(--navy); font: 700 22px/1 var(--app-font-mono); text-transform: uppercase; }
-.fleet-label p { margin: 0; color: var(--steel); font-size: 14px; line-height: 1.3; }
-.fleet-callout { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; margin-top: 66px; padding-top: 22px; border-top: 1px solid var(--light-line); color: var(--navy); }
-.fleet-callout p { margin: 0; font-size: 19px; }
-.fleet-callout a { color: var(--saffron); font: 700 13px/1 var(--app-font-mono); letter-spacing: .1em; text-transform: uppercase; }
+/* ── MISSION READY ─────────────────────────────────────────────────────────
+   A 4x2 fleet catalogue on a near-black stage. Cards are engineered rather
+   than decorative: thin technical border, category tag over the image,
+   number + name + description below, saffron only as an accent.          */
+.fleet {
+  position: relative;
+  padding: 110px 0 120px;
+  background: var(--deep-navy);
+  color: var(--white);
+  isolation: isolate;
+}
+/* Depth without noise: a soft vignette plus a faint technical grid. */
+.fleet-backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(120% 78% at 50% 0%, rgba(26,42,64,.62) 0%, transparent 68%),
+    linear-gradient(180deg, rgba(9,19,33,0) 0%, rgba(9,19,33,.85) 100%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.028) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0 1px, transparent 1px 84px);
+}
+
+.fleet-heading {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 52px;
+}
+.fleet-heading .section-title { color: var(--white); }
+.fleet-intro {
+  max-width: 430px;
+  margin: 0;
+  color: rgba(255,255,255,.7);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.fleet-strap {
+  margin: 0;
+  color: var(--sand);
+  font: 600 11px/1.5 var(--app-font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.fleet-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fleet-card {
+  border: 1px solid rgba(255,255,255,.1);
+  background: linear-gradient(180deg, rgba(20,32,50,.9) 0%, rgba(11,20,34,.95) 100%);
+  transition: border-color .28s ease, transform .28s ease;
+}
+.fleet-card-link {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 11px 11px 0;
+}
+.fleet-card-media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: #0b1422;
+}
+/* Sources are wide environmental shots with the aircraft centred, so a centred
+   cover crop keeps the subject and trims only sky and foreground. */
+.fleet-card-media .asset-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.fleet-card-media::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: linear-gradient(180deg, rgba(9,19,33,.35) 0%, transparent 34%, rgba(9,19,33,.5) 100%);
+  pointer-events: none;
+}
+.fleet-tag {
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 10px;
+  padding: 5px 9px;
+  border: 1px solid rgba(232,115,28,.55);
+  color: var(--saffron);
+  background: rgba(9,19,33,.72);
+  font: 700 10px/1 var(--app-font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: background-color .28s ease, color .28s ease;
+}
+.fleet-card-body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 0 12px;
+  padding: 17px 6px 19px;
+}
+.fleet-number {
+  color: var(--saffron);
+  font: 700 15px/1.1 var(--app-font-mono);
+  letter-spacing: .06em;
+}
+.fleet-card-text h3 {
+  margin: 0 0 6px;
+  color: var(--white);
+  font: 700 17px/1.1 var(--app-font-mono);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.fleet-card-text p {
+  margin: 0;
+  color: rgba(255,255,255,.6);
+  font-size: 13px;
+  line-height: 1.42;
+}
+.fleet-arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  align-self: center;
+  border: 1px solid rgba(232,115,28,.5);
+  border-radius: 50%;
+  color: var(--saffron);
+  transition: background-color .28s ease, color .28s ease, transform .28s ease;
+}
+.fleet-arrow svg { width: 14px; height: 14px; }
+
+/* Restrained hover: the image breathes, the border warms, the arrow fills. */
+@media (hover: hover) {
+  .fleet-card:hover { border-color: rgba(232,115,28,.5); }
+  .fleet-card:hover .fleet-card-media .asset-image { transform: scale(1.045); }
+  .fleet-card:hover .fleet-arrow {
+    color: var(--white);
+    background: var(--saffron);
+    transform: translateX(3px);
+  }
+  .fleet-card:hover .fleet-tag { color: var(--white); background: rgba(232,115,28,.9); }
+}
+.fleet-card:focus-within { border-color: rgba(232,115,28,.5); }
+.fleet-card-link:focus-visible { outline: 3px solid var(--saffron); outline-offset: 3px; }
+
+/* Assembled-into-place reveal: no flying, just a short settle. */
+@media (prefers-reduced-motion: no-preference) {
+  .fleet-card {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fleet-settle .62s cubic-bezier(.2,.75,.25,1) forwards;
+    animation-delay: var(--stagger, 0ms);
+    animation-timeline: view();
+    animation-range: entry 8% cover 26%;
+  }
+}
+@keyframes fleet-settle { to { opacity: 1; transform: translateY(0); } }
+
+.fleet-callout {
+  display: grid;
+  gap: 18px;
+  margin-top: 46px;
+  padding: 28px 24px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: linear-gradient(90deg, rgba(26,42,64,.6) 0%, rgba(11,20,34,.6) 100%);
+}
+.fleet-callout-lead {
+  margin: 0;
+  color: var(--white);
+  font-size: 22px;
+  line-height: 1.2;
+}
+.fleet-callout-detail {
+  max-width: 430px;
+  margin: 0;
+  color: rgba(255,255,255,.62);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.fleet-callout-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 14px 26px;
+  border: 1px solid var(--saffron);
+  color: var(--saffron);
+  font: 700 12px/1 var(--app-font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  transition: color .22s ease, background-color .22s ease;
+}
+.fleet-callout-action svg { width: 15px; height: 15px; transition: transform .22s ease; }
+.fleet-callout-action:hover, .fleet-callout-action:focus-visible { color: var(--white); background: var(--saffron); }
+.fleet-callout-action:hover svg { transform: translateX(3px); }
 
 .interceptor { display: grid; background: var(--navy); color: var(--white); }
 .interceptor-image { min-height: 460px; }
@@ -251,11 +709,11 @@
 .lab-image { min-height: 440px; }
 
 .recognition { padding: 100px 0 112px; background: var(--white); }
-.recognition-grid { display: grid; gap: 48px 28px; }
-.award-image { aspect-ratio: 16/9; }
-.award-tag { display: inline-block; margin-top: 22px; padding: 6px 9px; color: var(--white); background: var(--saffron); font: 700 11px/1 var(--app-font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.recognition-grid { display: grid; gap: 44px 48px; }
+.award-card { padding-top: 26px; border-top: 2px solid var(--navy); }
+.award-tag { display: inline-block; margin-top: 0; padding: 6px 9px; color: var(--white); background: var(--saffron); font: 700 11px/1 var(--app-font-mono); letter-spacing: .14em; text-transform: uppercase; }
 .award-card h3 { margin: 14px 0 10px; color: var(--navy); font: 700 28px/1 var(--app-font-mono); text-transform: uppercase; }
-.award-card p { max-width: 500px; margin: 0; color: var(--steel); font-size: 16px; }
+.award-card p { max-width: 520px; margin: 0; color: var(--steel); font-size: 17px; line-height: 1.5; }
 
 .story-tiles { display: grid; grid-template-columns: 1fr; }
 .story-tile { position: relative; min-height: 500px; overflow: hidden; color: var(--white); background: var(--navy); }
@@ -305,10 +763,11 @@
   .footer-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
 }
 @media (min-width: 768px) {
-  .section-heading-row, .fleet-heading { flex-direction: row; align-items: end; }
-  .segment-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .fleet-grid { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 48px 20px; }
-  .fleet-callout { flex-direction: row; align-items: center; justify-content: space-between; }
+  .section-heading-row { flex-direction: row; align-items: end; }
+  .fleet-heading { grid-template-columns: minmax(0,1fr) auto; align-items: end; column-gap: 40px; }
+  .fleet-heading-main { grid-row: span 2; }
+  .fleet-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .fleet-callout { grid-template-columns: auto 1fr auto; align-items: center; gap: 30px; padding: 30px 34px; }
   .interceptor { grid-template-columns: 1fr 1fr; }
   .interceptor-image { min-height: 620px; }
   .lab { grid-template-columns: 1.08fr .92fr; }
@@ -320,6 +779,8 @@
   .footer-top { grid-template-columns: .9fr 1.1fr; }
 }
 @media (min-width: 1080px) {
+  .fleet-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .fleet { padding: 122px 0 132px; }
   .primary-nav { display: flex; }
   .menu-button, .mobile-menu { display: none; }
   .header-inner { min-height: 92px; }
@@ -328,166 +789,259 @@
   .interceptor-copy { padding: 90px clamp(48px, 7vw, 110px); }
   .lab-copy { padding: 110px clamp(48px, 7vw, 110px); }
 }
-.drone-stage {
+/* ── ADVANCED AERIAL SYSTEMS ───────────────────────────────────────────────
+   Tall scroll container + sticky viewport stage. All four platform slides are
+   stacked in the same grid cell; scroll progress decides which is visible.   */
+.aas-stage-fallback { height: 440vh; background: var(--navy); }
+@media (prefers-reduced-motion: reduce) { .aas-stage-fallback { height: 100vh; } }
+
+.aas {
   position: relative;
-  height: 320vh;
+  height: 440vh;
   background: var(--navy);
   color: var(--white);
   overflow: clip;
 }
-.drone-stage.is-static { height: auto; }
-.drone-sticky {
+.aas.is-static { height: auto; }
+
+.aas-sticky {
   position: sticky;
   top: 0;
+  display: grid;
   height: 100svh;
+  place-items: center;
   overflow: hidden;
   background: var(--navy);
 }
-.drone-heading {
-  position: relative;
-  z-index: 3;
-  width: min(100% - 40px, 1240px);
-  margin: 0 auto;
-  padding-top: 76px;
-}
-.drone-lede {
-  max-width: 620px;
-  margin: 18px 0 0;
-  color: rgba(255,255,255,.7);
-  font-size: 17px;
-  line-height: 1.45;
-}
-.drone-origin-row {
+/* Faint technical grid + vignette. Never louder than the aircraft. */
+.aas-grid-bg {
   position: absolute;
-  z-index: 2;
-  top: 206px;
-  left: 4%;
-  right: 4%;
-  display: flex;
-  gap: 12px;
-  height: min(30vh, 280px);
+  inset: 0;
+  background:
+    radial-gradient(100% 70% at 50% 40%, rgba(26,42,64,.5) 0%, transparent 70%),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 96px);
   pointer-events: none;
 }
-.drone-origin {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-  padding: 10px 10px 12px;
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 22px;
-  background: rgba(26,42,64,.55);
-}
-.drone-kicker {
-  margin-bottom: 8px;
-  color: var(--sand);
-  font: 600 11px/1 var(--app-font-mono);
-  letter-spacing: .18em;
-}
-.drone-origin-well,
-.drone-dest-well {
-  position: relative;
-  overflow: hidden;
-  border-radius: 16px;
-}
-.drone-origin-well { flex: 1; min-height: 0; }
-.drone-origin.is-photo .drone-origin-well,
-.drone-dest-well.is-photo { background: #121820; }
-.drone-origin.is-cutout .drone-origin-well,
-.drone-dest-well.is-cutout { background: #f4f6f8; }
-.drone-grid {
+
+.aas-heading {
   position: absolute;
-  z-index: 1;
-  top: 52%;
-  right: 5%;
-  bottom: 3%;
-  left: 5%;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: min(100% - 40px, 1240px);
+  margin-inline: auto;
+  padding-top: 88px;
+  pointer-events: none;
+}
+.aas-lede {
+  max-width: 560px;
+  margin: 16px 0 0;
+  color: rgba(255,255,255,.66);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+/* The shared spatial system. One perspective origin for every slide so the
+   image and its information panel read as objects in the same space. */
+.aas-stage {
+  position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  height: auto;
+  width: min(100% - 40px, 1240px);
+  padding: 104px 0 84px;
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
 }
-.drone-dest-card {
-  display: flex;
-  min-height: 0;
-  flex-direction: column;
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 20px;
-  background: rgba(15,29,48,.82);
+.aas-slide {
+  display: grid;
+  grid-area: 1 / 1;
+  align-content: center;
+  gap: 26px;
+  transform-style: preserve-3d;
 }
-.drone-dest-well {
-  flex: 1 1 58%;
-  min-height: 72px;
+
+/* Uniform media plate. The four source renders have very different aspect
+   ratios and two carry a baked-in white background (no alpha), so each sits
+   contained inside an identical plate: dark for the photographs, light for the
+   white-background product shots so they blend into their plate rather than
+   floating as a white square on navy. The plate is what gives the sequence its
+   consistent visual weight. */
+.aas-media {
+  position: relative;
+  height: min(48svh, 400px);
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
+  border: 1px solid rgba(255,255,255,.1);
+  transform-origin: 50% 60%;
+  will-change: transform, opacity;
+  box-shadow: 0 34px 60px rgba(0,0,0,.5);
 }
-.drone-dest-well img,
-.drone-flyer img {
+.aas-media.is-photo { background: #0d151f; }
+/* Matches the sampled background of drone3/drone4 (#f9fbfc) so the image
+   edge disappears into the plate. */
+.aas-media.is-cutout { background: #f9fbfc; }
+/* The plate is already the image's exact shape, so filling it neither crops
+   nor letterboxes — and the two small renders scale up to match the others
+   instead of sitting as postage stamps in a full-height stage. */
+.aas-media img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   pointer-events: none;
 }
-.drone-dest-copy { padding: 10px 4px 2px; }
-.drone-dest-copy span {
-  color: var(--sand);
-  font: 600 11px/1 var(--app-font-mono);
-  letter-spacing: .16em;
-}
-.drone-dest-copy h3 {
-  margin: 6px 0 4px;
-  font: 700 clamp(14px, 1.8vw, 20px)/1.1 var(--app-font-mono);
-  text-transform: uppercase;
-}
-.drone-dest-copy p {
-  margin: 0;
-  color: rgba(255,255,255,.62);
-  font-size: 12px;
-  line-height: 1.35;
-}
-.drone-flight-layer {
+.aas-media.is-cutout img { padding: 5%; }
+/* Ground plane: anchors the plate in space. */
+.aas-media-rule {
   position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-.drone-flyer {
-  position: absolute;
-  top: 0;
+  bottom: -1px;
   left: 0;
-  overflow: hidden;
-  border-radius: 16px;
-  transform-origin: 0 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--saffron) 0%, rgba(232,115,28,.25) 38%, transparent 70%);
+}
+.aas-media-rule::after {
+  position: absolute;
+  content: '';
+  inset: auto 0 -30px;
+  height: 30px;
+  background: radial-gradient(60% 100% at 30% 0%, rgba(232,115,28,.12), transparent 72%);
+}
+
+.aas-info {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  padding-left: 18px;
+  border-left: 1px solid rgba(255,255,255,.14);
+  transform-origin: 0% 50%;
   will-change: transform, opacity;
 }
-.drone-flyer.is-photo { background: #121820; }
-.drone-flyer.is-cutout { background: #f4f6f8; }
-.drone-static-inner {
+.aas-info-index {
+  color: var(--saffron);
+  font: 700 12px/1 var(--app-font-mono);
+  letter-spacing: .18em;
+}
+.aas-info-role {
+  margin-top: 10px;
+  color: var(--sand);
+  font: 600 10px/1 var(--app-font-mono);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.aas-info h3 {
+  margin: 12px 0 0;
+  font: 700 clamp(26px, 4.4vw, 46px)/1 var(--app-font-mono);
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+}
+.aas-info p {
+  max-width: 460px;
+  margin: 12px 0 0;
+  color: rgba(255,255,255,.66);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.aas-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+  width: 100%;
+  max-width: 460px;
+  margin: 20px 0 0;
+  border-top: 1px solid rgba(255,255,255,.14);
+}
+.aas-specs div { padding: 12px 0 0; }
+.aas-specs dt {
+  color: var(--sand);
+  font: 600 9px/1 var(--app-font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.aas-specs dd {
+  margin: 6px 0 0;
+  color: rgba(255,255,255,.88);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+/* Progress rail: where the viewer is in the sequence. */
+.aas-rail {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin-inline: auto;
+  display: grid;
+  width: min(100% - 40px, 1240px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 0 30px;
+  list-style: none;
+}
+.aas-rail-item { display: grid; gap: 7px; }
+.aas-rail-id {
+  color: var(--saffron);
+  font: 700 10px/1 var(--app-font-mono);
+  letter-spacing: .16em;
+}
+.aas-rail-track {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(255,255,255,.16);
+}
+.aas-rail-fill {
+  display: block;
+  height: 100%;
+  background: var(--saffron);
+  transform-origin: 0 50%;
+}
+.aas-rail-title {
+  color: rgba(255,255,255,.6);
+  font: 600 9px/1.2 var(--app-font-mono);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+/* Mobile: the information sits under the image, motion amplitude is halved in
+   JS, and the perspective is shallower so rotation stays subtle. */
+@media (max-width: 899px) {
+  .aas { height: 400vh; }
+  .aas-stage { perspective: 1100px; }
+  .aas-heading { padding-top: 80px; }
+  .aas-lede { display: none; }
+  .aas-slide { gap: 18px; }
+  .aas-info p { font-size: 13px; }
+  .aas-specs { max-width: none; }
+  .aas-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-bottom: 22px; }
+  .aas-rail-title { display: none; }
+}
+
+@media (min-width: 900px) {
+  .aas-slide {
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr);
+    align-items: center;
+    gap: 48px;
+  }
+  .aas-media { height: min(64svh, 680px); }
+  .aas-stage { padding: 92px 0 78px; }
+  .aas-heading { padding-top: 100px; }
+}
+
+/* Static fallback: the same content as a plain editorial list. */
+.aas-static-inner {
   width: min(100% - 40px, 1240px);
   margin: 0 auto;
-  padding: 88px 0 72px;
+  padding: 92px 0 84px;
 }
-.drone-grid.is-static {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  height: auto;
-  margin-top: 36px;
-}
-@media (min-width: 900px) {
-  .drone-origin-row { top: 220px; height: min(34vh, 340px); gap: 16px; }
-  .drone-grid {
-    top: 54%;
-    right: 6%;
-    bottom: 4%;
-    left: 6%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    height: auto;
-  }
-  .drone-dest-copy p { font-size: 13px; }
-}
+.aas-static-list { display: grid; gap: 64px; margin-top: 44px; }
+.aas-slide.is-static { position: relative; grid-area: auto; opacity: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

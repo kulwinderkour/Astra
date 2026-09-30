@@ -1,57 +1,133 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ChevronDown, Check, Mail, MapPin, Menu, Phone, RotateCcw, X } from 'lucide-react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense, lazy, useEffect, useRef, useState, type ReactNode } from 'react';
+import { ArrowRight, ChevronDown, Check, Mail, MapPin, Menu, Phone, RotateCcw, X } from 'lucide-react';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { DroneShowcase } from '@/components/drone-showcase';
-import { Toaster } from '@/components/ui/toaster';
-import { TooltipProvider } from '@/components/ui/tooltip';
+// Segments and the scroll showcase are the only consumers of framer-motion and
+// both sit below the fold, so they share a deferred chunk. Each fallback
+// reserves its section's height to keep the swap free of layout shift.
+const Segments = lazy(() =>
+  import('@/components/segments').then((m) => ({ default: m.Segments })),
+);
+const DroneShowcase = lazy(() =>
+  import('@/components/drone-showcase').then((m) => ({ default: m.DroneShowcase })),
+);
 
-const queryClient = new QueryClient();
-
+/**
+ * Canonical image manifest. Every filename here resolves to
+ * public/assets/images/<file>. Dropping a correctly named file into that
+ * directory is all that is required to light up the matching slot — no code
+ * change. See ASSET-MANIFEST.md for the required subject and aspect ratio of
+ * each slot, and `npm run verify:assets` for the automated check.
+ */
 const imageFiles = {
   logo: 'logo1.png',
   poster: 'hero-poster.jpg',
-  defence: 'segment-defence.jpg',
-  commercial: 'segment-commercial.jpg',
-  fpv: 'product-fpv.jpg',
-  unjamable: 'product-unjamable.jpg',
-  logistics: 'product-logistics.jpg',
-  surveillance: 'product-surveillance.jpg',
-  kamikaze: 'product-kamikaze.jpg',
-  vtol: 'product-vtol.jpg',
-  fiber: 'product-fiber-optic.jpg',
-  training: 'product-training.jpg',
   interceptor: 'interceptor.jpg',
   lab: 'drone-lab.jpg',
-  startup: 'award-startup-punjab.jpg',
-  army: 'award-indian-army.jpg',
   mission: 'tile-mission.jpg',
   tileTraining: 'tile-training.jpg',
   contact: 'tile-contact.jpg',
 } as const;
 
+/**
+ * The eight fleet platforms, in catalogue order. Each image lives in
+ * public/assets/images/fleet/ and is a 1584x993 source re-encoded to WebP.
+ * `tag` is the technical category shown over the image.
+ */
 const fleet = [
-  ['FPV Drone', 'High-speed, agile, low-latency', imageFiles.fpv],
-  ['Unjamable Drone', 'Secure, jam-resistant, long-range', imageFiles.unjamable],
-  ['Logistics Drone', 'Heavy-lift, autonomous, reliable', imageFiles.logistics],
-  ['Surveillance Drone', 'Day and night reconnaissance with real-time intelligence', imageFiles.surveillance],
-  ['Kamikaze Drone', 'Precision strike with autonomous navigation', imageFiles.kamikaze],
-  ['VTOL Drone', 'Vertical take-off, long range, ideal for mapping and ISR', imageFiles.vtol],
-  ['Fiber Optic Drone', 'Unbroken, high-bandwidth link for critical missions', imageFiles.fiber],
-  ['Training Drone', 'Durable, crash-resistant, indoor and outdoor use', imageFiles.training],
-];
+  {
+    number: '01',
+    tag: 'Tactical FPV',
+    name: 'FPV Drone',
+    detail: 'High-speed, agile, low-latency tactical platform.',
+    image: 'fleet/fleet-fpv.webp',
+    alt: 'ASTRA tactical FPV drone on a ridge at golden hour',
+  },
+  {
+    number: '02',
+    tag: 'Anti-jam EW',
+    name: 'Unjamable Drone',
+    detail: 'Secure, jam-resistant, long-range navigation.',
+    image: 'fleet/fleet-unjamable.webp',
+    alt: 'ASTRA jam-resistant hexacopter over an alpine ridge',
+  },
+  {
+    number: '03',
+    tag: 'Heavy Payload',
+    name: 'Logistics Drone',
+    detail: 'Heavy-lift, autonomous payload delivery system.',
+    image: 'fleet/fleet-logistics.webp',
+    alt: 'ASTRA logistics drone carrying a cargo crate over mountains',
+  },
+  {
+    number: '04',
+    tag: 'Tactical ISR',
+    name: 'Surveillance Drone',
+    detail: 'Day and night reconnaissance with real-time feeds.',
+    image: 'fleet/fleet-surveillance.webp',
+    alt: 'ASTRA fixed-wing surveillance UAV over a mountain valley',
+  },
+  {
+    number: '05',
+    tag: 'Precision Strike',
+    name: 'Kamikaze Drone',
+    detail: 'Precision strike with autonomous navigation.',
+    image: 'fleet/fleet-kamikaze.webp',
+    alt: 'ASTRA loitering munition on its launch platform at sunset',
+  },
+  {
+    number: '06',
+    tag: 'Hybrid VTOL',
+    name: 'VTOL Drone',
+    detail: 'Vertical take-off, long range, ideal for mapping and ISR.',
+    image: 'fleet/fleet-vtol.webp',
+    alt: 'ASTRA fixed-wing VTOL aircraft on a runway at sunset',
+  },
+  {
+    number: '07',
+    tag: 'Secure Fiber',
+    name: 'Fiber Optic Drone',
+    detail: 'Unbroken, high-bandwidth link for critical missions.',
+    image: 'fleet/fleet-fiber-optic.webp',
+    alt: 'ASTRA drone deploying a fiber-optic spool at sunset',
+  },
+  {
+    number: '08',
+    tag: 'Pilot Training',
+    name: 'Training Drone',
+    detail: 'Durable, crash-resistant, indoor and outdoor use.',
+    image: 'fleet/fleet-training.webp',
+    alt: 'ASTRA training drones and controllers on a bench',
+  },
+] as const;
 
-function AssetImage({ file, alt, className = '' }: { file: string; alt: string; className?: string }) {
+/**
+ * Renders an image from the asset manifest. If the file is absent or fails to
+ * decode, it falls back to a neutral ASTRA-branded panel rather than any
+ * developer-facing text. The panel is decorative and hidden from assistive
+ * technology — the surrounding heading and copy carry the meaning.
+ */
+function AssetImage({
+  file,
+  alt,
+  className = '',
+  priority = false,
+}: {
+  file: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+}) {
   const [missing, setMissing] = useState(false);
   return missing ? (
-    <div className={`asset-placeholder ${className}`} role="img" aria-label={`Upload: ${file}`}>
-      <span>Upload: {file}</span>
-    </div>
+    <div className={`asset-placeholder ${className}`} aria-hidden="true" />
   ) : (
     <img
       className={`asset-image ${className}`}
       src={`/assets/images/${file}`}
       alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchPriority={priority ? 'high' : 'auto'}
       onError={() => setMissing(true)}
     />
   );
@@ -71,31 +147,101 @@ function SectionHeading({ eyebrow, title, intro, light = false }: { eyebrow: str
   );
 }
 
+const NAV = [
+  ['Segments', '#segments'],
+  ['Products', '#fleet'],
+  ['Interceptor', '#interceptor'],
+  ['Drone Lab', '#drone-lab'],
+  ['About', '#about'],
+] as const;
+
+/**
+ * Marks the section currently filling the viewport. Uses IntersectionObserver
+ * rather than a scroll handler, so state changes once per section crossing
+ * instead of once per scroll event.
+ */
+function useActiveSection() {
+  const [active, setActive] = useState('');
+  useEffect(() => {
+    const ids = NAV.map(([, href]) => href.slice(1));
+    const nodes = ids
+      .map((id) => document.getElementById(id))
+      .filter((n): n is HTMLElement => n !== null);
+    if (nodes.length === 0) return;
+    const ratios = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) ratios.set(entry.target.id, entry.intersectionRatio);
+        let best = '';
+        let bestRatio = 0.12;
+        for (const [id, ratio] of ratios) {
+          if (ratio > bestRatio) {
+            best = id;
+            bestRatio = ratio;
+          }
+        }
+        setActive(best);
+      },
+      { threshold: [0, 0.12, 0.3, 0.55, 0.8], rootMargin: '-92px 0px 0px 0px' },
+    );
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+  return active;
+}
+
 function Header({ scrolled }: { scrolled: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const nav = [['Segments', '#segments'], ['Products', '#fleet'], ['Interceptor', '#interceptor'], ['Drone Lab', '#drone-lab'], ['About', '#about']];
+  const active = useActiveSection();
+  const nav = NAV;
   const closeMenu = () => setMenuOpen(false);
+
+  // Close on Escape and stop the page scrolling behind the open menu.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [menuOpen]);
+
   return (
     <>
       <header className={`site-header ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="container header-inner">
           <a className="brand" href="#top" onClick={closeMenu} data-testid="link-brand">
-            <AssetImage file={imageFiles.logo} alt="ASTRA logo" className="brand-mark" />
+            <AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" priority />
             <span className="brand-lockup">
               <span className="brand-name">ASTRA</span>
               <span className="brand-sub">DRONES AND ROBOTICS<br />SOLUTIONS PVT. LTD.</span>
             </span>
           </a>
-          <nav className="primary-nav" aria-label="Primary navigation">
-            {nav.map(([label, href]) => <a href={href} key={href} data-testid={`link-nav-${label.toLowerCase().replace(' ', '-')}`}>{label}</a>)}
+          <nav className="primary-nav" aria-label="Primary">
+            {nav.map(([label, href]) => (
+              <a
+                href={href}
+                key={href}
+                className={active === href.slice(1) ? 'is-active' : undefined}
+                aria-current={active === href.slice(1) ? 'true' : undefined}
+                data-testid={`link-nav-${label.toLowerCase().replace(' ', '-')}`}
+              >
+                {label}
+              </a>
+            ))}
           </nav>
           <button className="menu-button" type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? 'Close menu' : 'Open menu'} onClick={() => setMenuOpen(!menuOpen)} data-testid="button-mobile-menu">
-            {menuOpen ? <X /> : <Menu />}
+            {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
         </div>
       </header>
       {menuOpen ? (
-        <nav id="mobile-navigation" className="mobile-menu" aria-label="Mobile navigation">
+        <nav id="mobile-navigation" className="mobile-menu" aria-label="Mobile">
           {nav.map(([label, href]) => <a href={href} onClick={closeMenu} key={href} data-testid={`link-mobile-${label.toLowerCase().replace(' ', '-')}`}>{label}</a>)}
         </nav>
       ) : null}
@@ -108,15 +254,30 @@ function Hero() {
   const [visible, setVisible] = useState(false);
   const [ended, setEnded] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  // The hero film is a 1.3 MB decorative layer. On small screens and on
+  // metered connections the poster alone carries the section, so the video is
+  // never fetched there.
+  const [useVideo, setUseVideo] = useState(false);
+
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReducedMotion(media.matches);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const wide = window.matchMedia('(min-width: 768px)');
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    const update = () => {
+      setReducedMotion(motion.matches);
+      setUseVideo(wide.matches && !motion.matches && !connection?.saveData);
+    };
     update();
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
+    motion.addEventListener('change', update);
+    wide.addEventListener('change', update);
+    return () => {
+      motion.removeEventListener('change', update);
+      wide.removeEventListener('change', update);
+    };
   }, []);
+
   useEffect(() => {
-    if (reducedMotion) {
+    if (!useVideo) {
       setVisible(true);
       videoRef.current?.pause();
       return;
@@ -125,76 +286,112 @@ function Hero() {
     const video = videoRef.current;
     if (video) {
       video.currentTime = 0;
-      const playback = video.play();
-      playback?.catch(() => setVisible(true));
+      video.play()?.catch(() => setVisible(true));
     }
     return () => window.clearTimeout(timer);
-  }, [reducedMotion]);
+  }, [useVideo]);
+
   const replay = () => {
     const video = videoRef.current;
     setEnded(false);
-    setVisible(reducedMotion);
-    if (video && !reducedMotion) {
-      video.currentTime = 0;
-      void video.play().catch(() => setVisible(true));
-      window.setTimeout(() => setVisible(true), 2600);
-    }
+    if (!video || !useVideo) return;
+    setVisible(false);
+    video.currentTime = 0;
+    void video.play().catch(() => setVisible(true));
+    window.setTimeout(() => setVisible(true), 2600);
   };
+
   return (
     <section className="hero" id="top" aria-label="ASTRA introduction">
       <div className="hero-poster" style={{ backgroundImage: `url(/assets/images/${imageFiles.poster})` }} aria-hidden="true" />
-      <video ref={videoRef} className="hero-video" muted playsInline preload="auto" poster={`/assets/images/${imageFiles.poster}`} onEnded={() => setEnded(true)} aria-label="ASTRA drone landing"><source src="/assets/videos/hero-landing.mp4" type="video/mp4" /></video>
+      {useVideo ? (
+        <video
+          ref={videoRef}
+          className="hero-video"
+          muted
+          playsInline
+          preload="metadata"
+          poster={`/assets/images/${imageFiles.poster}`}
+          onEnded={() => setEnded(true)}
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <source src="/assets/videos/hero-landing.mp4" type="video/mp4" />
+        </video>
+      ) : null}
       <div className="hero-scrim" aria-hidden="true" />
-      <span className="hero-label">INDIGENOUS SYSTEMS / FIELD READY</span>
+      <span className="hero-label" aria-hidden="true">INDIGENOUS SYSTEMS / FIELD READY</span>
       <div className="hero-content">
         <div className={`motto-lockup ${visible ? 'is-visible' : ''}`}>
-          <p className="motto-sanskrit">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</p>
+          <h1 className="motto-sanskrit" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</h1>
           <p className="motto-translation"><span>Indigenous technology is the source of national strength</span></p>
         </div>
       </div>
-      <button className="hero-replay" type="button" onClick={replay} aria-label={ended ? 'Replay hero video' : 'Restart hero video'} data-testid="button-hero-replay"><RotateCcw /></button>
-      <a className="explore-link" href="#mission" data-testid="link-explore">Scroll down <ChevronDown /></a>
-    </section>
-  );
-}
-
-function Segments() {
-  return (
-    <section className="segments" id="segments">
-      <div className="container">
-        <SectionHeading eyebrow="Our segments" title={<>Built for <em>consequence.</em></>} intro="From contested airspace to critical infrastructure, ASTRA builds dependable systems for the work that cannot wait." light />
-        <div className="segment-grid">
-          <article className="segment-card">
-            <div className="image-frame segment-image"><AssetImage file={imageFiles.defence} alt="Defence UAV platform" /></div>
-            <div className="segment-copy"><h3>Defence</h3><p>Combat-ready UAV platforms for tactical and strategic missions.</p><a className="outline-link" href="#interceptor" data-testid="link-defence-systems">See defence systems</a></div>
-          </article>
-          <article className="segment-card">
-            <div className="image-frame segment-image"><AssetImage file={imageFiles.commercial} alt="Commercial inspection drone" /></div>
-            <div className="segment-copy"><h3>Commercial</h3><p>Surveillance, mapping and inspection for enterprises.</p><a className="outline-link" href="#fleet" data-testid="link-commercial-systems">See commercial systems</a></div>
-          </article>
-        </div>
-      </div>
+      {useVideo ? (
+        <button className="hero-replay" type="button" onClick={replay} aria-label={ended ? 'Replay hero film' : 'Restart hero film'} data-testid="button-hero-replay">
+          <RotateCcw aria-hidden="true" />
+        </button>
+      ) : null}
+      <a className="explore-link" href="#mission" data-testid="link-explore">Scroll down <ChevronDown aria-hidden="true" /></a>
     </section>
   );
 }
 
 function Fleet() {
   return (
-    <section className="fleet" id="fleet">
+    <section className="fleet" id="fleet" aria-labelledby="fleet-title">
+      <div className="fleet-backdrop" aria-hidden="true" />
       <div className="container">
-        <div className="fleet-heading section-heading">
-          <div><span className="eyebrow">Our fleet</span><h2 className="section-title">Mission <em>ready.</em></h2></div>
-          <p className="section-intro">A modular family of platforms designed, assembled and supported in India.</p>
+        <div className="fleet-heading">
+          <div className="fleet-heading-main">
+            <span className="eyebrow">Our fleet</span>
+            <h2 className="section-title" id="fleet-title">Mission <em>ready.</em></h2>
+          </div>
+          <p className="fleet-intro">
+            A modular family of platforms designed, assembled, tested and supported in India.
+          </p>
+          <p className="fleet-strap" aria-hidden="true">
+            Indigenous technology<br />for a stronger, safer India.
+          </p>
         </div>
-        <div className="fleet-grid">
-          {fleet.map(([name, detail, file]) => (
-            <article key={name} data-testid={`card-fleet-${name.toLowerCase().replaceAll(' ', '-')}`}>
-              <div className="image-frame fleet-image"><AssetImage file={file} alt={`${name} from ASTRA`} /></div>
-              <div className="fleet-label"><h3>{name}</h3><p>{detail}</p></div>
-            </article>
+
+        <ul className="fleet-grid">
+          {fleet.map((platform, index) => (
+            <li
+              key={platform.name}
+              className="fleet-card"
+              style={{ '--stagger': `${(index % 4) * 70 + Math.floor(index / 4) * 110}ms` } as React.CSSProperties}
+              data-testid={`card-fleet-${platform.name.toLowerCase().replaceAll(' ', '-')}`}
+            >
+              <a className="fleet-card-link" href="#contact" aria-label={`${platform.name} — enquire`}>
+                <div className="fleet-card-media">
+                  <AssetImage file={platform.image} alt={platform.alt} />
+                  <span className="fleet-tag">{platform.tag}</span>
+                </div>
+                <div className="fleet-card-body">
+                  <span className="fleet-number" aria-hidden="true">{platform.number}</span>
+                  <div className="fleet-card-text">
+                    <h3>{platform.name}</h3>
+                    <p>{platform.detail}</p>
+                  </div>
+                  <span className="fleet-arrow" aria-hidden="true">
+                    <ArrowRight />
+                  </span>
+                </div>
+              </a>
+            </li>
           ))}
+        </ul>
+
+        <div className="fleet-callout">
+          <p className="fleet-callout-lead">Need a mission-specific platform?</p>
+          <p className="fleet-callout-detail">
+            Custom configurations, payloads and support for defence, security and research missions.
+          </p>
+          <a className="fleet-callout-action" href="#contact" data-testid="link-talk-engineers">
+            Talk to our engineers <ArrowRight aria-hidden="true" />
+          </a>
         </div>
-        <div className="fleet-callout"><p>Need custom battery packs or a mission-specific build?</p><a href="#contact" data-testid="link-talk-engineers">Talk to our engineers</a></div>
       </div>
     </section>
   );
@@ -203,10 +400,10 @@ function Fleet() {
 function Interceptor() {
   const specs = [['Role', 'Counter-UAV operations'], ['Handling', 'High agility and speed'], ['Guidance', 'Real-time target tracking'], ['Build', 'Designed and made in India']];
   return (
-    <section className="interceptor" id="interceptor">
-      <div className="image-frame interceptor-image"><AssetImage file={imageFiles.interceptor} alt="ASTRA interceptor drone" /></div>
+    <section className="interceptor" id="interceptor" aria-labelledby="interceptor-title">
+      <div className="image-frame interceptor-image"><AssetImage file={imageFiles.interceptor} alt="The ASTRA Interceptor counter-UAV platform" /></div>
       <div className="interceptor-copy">
-        <span className="eyebrow">Featured platform</span><h2 className="section-title">Interceptor <em>Drone</em></h2>
+        <span className="eyebrow">Featured platform</span><h2 className="section-title" id="interceptor-title">Interceptor <em>Drone</em></h2>
         <p className="lead">A vertical-launch counter-UAV platform built to find, track and neutralise hostile drones.</p>
         <dl className="spec-grid">{specs.map(([label, value]) => <div className="spec" key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
         <a className="button-primary" href="#contact" data-testid="link-request-briefing">Request a briefing</a>
@@ -218,33 +415,62 @@ function Interceptor() {
 function DroneLab() {
   const items = ['Lab design, equipment and installation', 'Hands-on workshops and FPV flight training', 'Curriculum for build, code and fly', 'Ongoing technical support'];
   return (
-    <section className="lab" id="drone-lab">
-      <div className="lab-copy"><span className="eyebrow">Institutional capability</span><h2 className="section-title">Set up a <em>drone lab.</em></h2><p>We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.</p><ul className="checklist">{items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}</ul><a className="button-primary" href="#contact" data-testid="link-plan-lab">Plan your lab</a></div>
-      <div className="image-frame lab-image"><AssetImage file={imageFiles.lab} alt="Students working in an ASTRA drone lab" /></div>
+    <section className="lab" id="drone-lab" aria-labelledby="lab-title">
+      <div className="lab-copy"><span className="eyebrow">Institutional capability</span><h2 className="section-title" id="lab-title">Set up a <em>drone lab.</em></h2><p>We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.</p><ul className="checklist">{items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}</ul><a className="button-primary" href="#contact" data-testid="link-plan-lab">Plan your lab</a></div>
+      <div className="image-frame lab-image"><AssetImage file={imageFiles.lab} alt="Students building drones in an ASTRA drone lab" /></div>
     </section>
   );
 }
 
 function Recognition() {
-  const awards = [['2026', 'Startup Punjab Conclave', 'The Chief Minister of Punjab appreciated ASTRA for indigenous innovation and excellence in UAV technology.', imageFiles.startup, 'Startup Punjab'], ['Indian Army', 'Workshop and delivery', 'ASTRA ran a drone workshop and delivered high-performance drones to the Indian Army.', imageFiles.army, 'Indian Army']];
+  const awards = [
+    ['2026', 'Startup Punjab Conclave', 'The Chief Minister of Punjab appreciated ASTRA for indigenous innovation and excellence in UAV technology.'],
+    ['Indian Army', 'Workshop and delivery', 'ASTRA ran a drone workshop and delivered high-performance drones to the Indian Army.'],
+  ];
   return (
-    <section className="recognition" id="about">
-      <div className="container"><SectionHeading eyebrow="Reward & recognition" title={<>Proof in the <em>field.</em></>} />
-        <div className="recognition-grid">{awards.map(([tag, title, text, file, alt]) => <article className="award-card" key={title}><div className="image-frame award-image"><AssetImage file={file} alt={alt} /></div><span className="award-tag">{tag}</span><h3>{title}</h3><p>{text}</p></article>)}</div>
+    <section className="recognition" id="about" aria-labelledby="recognition-title">
+      <div className="container">
+        <SectionHeading eyebrow="Reward & recognition" title={<span id="recognition-title">Proof in the <em>field.</em></span>} />
+        <div className="recognition-grid">
+          {awards.map(([tag, title, text]) => (
+            <article className="award-card" key={title}>
+              <span className="award-tag">{tag}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 function StoryTiles() {
-  const tiles = [['Who we are', 'Our Mission', imageFiles.mission, '#about'], ['Learn to build and fly', 'Training', imageFiles.tileTraining, '#drone-lab'], ['Work with us', 'Contact', imageFiles.contact, '#contact']];
-  return <section className="story-tiles">{tiles.map(([kicker, title, file, href]) => <article className="story-tile" key={title}><div className="image-frame"><AssetImage file={file} alt={title} /></div><div className="story-copy"><span className="story-kicker">{kicker}</span><h3>{title}</h3><a href={href} data-testid={`link-story-${title.toLowerCase()}`}>Explore</a></div></article>)}</section>;
+  const tiles = [
+    ['Who we are', 'Our Mission', imageFiles.mission, '#about'],
+    ['Learn to build and fly', 'Training', imageFiles.tileTraining, '#drone-lab'],
+    ['Work with us', 'Contact', imageFiles.contact, '#contact'],
+  ];
+  return (
+    <section className="story-tiles" aria-label="Explore ASTRA">
+      {tiles.map(([kicker, title, file, href]) => (
+        <article className="story-tile" key={title}>
+          <div className="image-frame"><AssetImage file={file} alt="" /></div>
+          <div className="story-copy">
+            <span className="story-kicker">{kicker}</span>
+            <h3>{title}</h3>
+            <a href={href} aria-label={`Explore ${title}`} data-testid={`link-story-${title.toLowerCase()}`}>Explore</a>
+          </div>
+        </article>
+      ))}
+    </section>
+  );
 }
 
 function Contact() {
   return (
-    <section className="contact-band" id="contact">
-      <div className="container contact-layout"><div><span className="eyebrow">Start a conversation</span><h2 className="section-title">Talk to <em>ASTRA.</em></h2><p className="contact-copy">For product briefings, drone labs or custom builds, call or write to us.</p></div>
+    <section className="contact-band" id="contact" aria-labelledby="contact-title">
+      <div className="container contact-layout"><div><span className="eyebrow">Start a conversation</span><h2 className="section-title" id="contact-title">Talk to <em>ASTRA.</em></h2><p className="contact-copy">For product briefings, drone labs or custom builds, call or write to us.</p></div>
         <div><div className="contact-links"><a className="contact-link" href="tel:+916239663762" data-testid="link-contact-phone"><Phone aria-hidden="true" /> +91 62396 63762</a><a className="contact-link" href="mailto:astradrobotics@gmail.com" data-testid="link-contact-email"><Mail aria-hidden="true" /> astradrobotics@gmail.com</a></div><p className="contact-address"><MapPin aria-hidden="true" />307, Top Floor, Visvesvaraya Block, Indian Institute of Technology Ropar, Rupnagar, Punjab 140001</p></div>
       </div>
     </section>
@@ -252,7 +478,7 @@ function Contact() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><a className="brand" href="#top" data-testid="link-footer-brand"><AssetImage file={imageFiles.logo} alt="ASTRA logo" className="brand-mark" /><span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span></a><div className="footer-motto">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div><p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry.</p></div><div className="footer-columns"><div className="footer-column"><h3>Quick links</h3><a href="#about">About Us</a><a href="#segments">Our Segments</a><a href="#fleet">Products</a></div><div className="footer-column"><h3>Segments</h3><a href="#interceptor">Defence Drones</a><a href="#fleet">Commercial Drones</a><a href="#drone-lab">Drone Lab</a></div><div className="footer-column"><h3>Get in touch</h3><a href="tel:+916239663762">+91 62396 63762</a><a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a></div></div></div><div className="footer-bottom"><span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span><span className="legal-links"><a href="#top">Privacy</a><a href="#top">Terms</a></span></div></div></footer>;
+  return <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><a className="brand" href="#top" data-testid="link-footer-brand"><AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" /><span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span></a><div className="footer-motto" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div><p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response and surveillance.</p></div><div className="footer-columns"><div className="footer-column"><h3>Quick links</h3><a href="#about">About Us</a><a href="#segments">Our Focus</a><a href="#fleet">Products</a></div><div className="footer-column"><h3>Capability</h3><a href="#interceptor">Defence Drones</a><a href="#fleet">Platforms</a><a href="#drone-lab">Drone Lab</a></div><div className="footer-column"><h3>Get in touch</h3><a href="tel:+916239663762">+91 62396 63762</a><a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a><a href="#contact">Visit us</a></div></div></div><div className="footer-bottom"><span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span></div></div></footer>;
 }
 
 function LandingPage() {
@@ -263,11 +489,42 @@ function LandingPage() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  return <div className="astra-page"><Header scrolled={scrolled} /><main><Hero /><section className="mission-band" id="mission"><div className="container"><span className="mission-mark" aria-hidden="true" /><p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p></div></section><DroneShowcase /><Segments /><Fleet /><Interceptor /><DroneLab /><Recognition /><StoryTiles /><Contact /></main><Footer /></div>;
+  return (
+    <div className="astra-page">
+      <a className="skip-link" href="#mission">Skip to content</a>
+      <Header scrolled={scrolled} />
+      <main>
+        <Hero />
+        <section className="mission-band" id="mission" aria-label="About ASTRA">
+          <div className="container">
+            <span className="mission-mark" aria-hidden="true" />
+            <p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response and surveillance. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p>
+          </div>
+        </section>
+        <Suspense fallback={<div className="aas-stage-fallback" aria-hidden="true" />}>
+          <DroneShowcase />
+        </Suspense>
+        <Suspense fallback={<div className="seg-fallback" aria-hidden="true" />}>
+          <Segments />
+        </Suspense>
+        <Fleet />
+        <Interceptor />
+        <DroneLab />
+        <Recognition />
+        <StoryTiles />
+        <Contact />
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
 function App() {
-  return <QueryClientProvider client={queryClient}><TooltipProvider><ErrorBoundary><LandingPage /></ErrorBoundary><Toaster /></TooltipProvider></QueryClientProvider>;
+  return (
+    <ErrorBoundary>
+      <LandingPage />
+    </ErrorBoundary>
+  );
 }
 
 export default App;
