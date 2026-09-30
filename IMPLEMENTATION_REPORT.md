@@ -751,3 +751,73 @@ Re-verified: typecheck and build pass, `verify:assets` clean (22 references, 5
 awaiting supply, no orphans). 11 widths from 1920 to 320 — no overflow, no
 broken images, no developer text, 0 console errors beyond the 5 known 404s.
 Anchors clear the header; the Defence CTA still resolves to `#interceptor`.
+
+---
+
+# Addendum 5 — Segments as a pure cinematic stage
+
+The Defence card was removed too. The section is now the hangar environment,
+the engineering HUD, the headline and one CTA — nothing else.
+
+## Removed
+
+- The `SEGMENTS` data array, the `SegmentCard` component and the card grid.
+- Every `.seg-card*` and `.seg-grid*` rule (the single-panel layout added in
+  Addendum 4 went with them).
+- `segment-defence.webp` and `segment-commercial.webp`, now unreferenced. Both
+  source originals are untouched in `Astra im/`.
+
+The section dropped from ~1.5× viewport to **1.0–1.04×**, and the Segments
+chunk from 5.23 KB to **3.28 KB**.
+
+A single `See defence systems →` link was kept under the lede so the section
+still leads somewhere; the card was the only route to `#interceptor` from here.
+Say the word if it should go too.
+
+## Real 3D, not stacked 2D offsets
+
+Earlier the depth was translation only. It is now a genuine perspective rig: one
+`perspective: 1500px` with a shared `perspective-origin` on the stage, and every
+layer inside it takes its **translate, rotation and Z offset** from the same
+pointer vector, scaled by how near it is meant to sit. `transform-style:
+preserve-3d` is set along the chain so the rotations compose rather than
+flatten.
+
+Measured corner-to-corner in Chromium — all four layers report a real
+`matrix3d`, on a clean monotonic gradient:
+
+| Layer | Lateral travel | Rotation component | Z |
+|---|---|---|---|
+| Heading | 11.1 px | 0.0249 | +40 |
+| Hangar plate | 15.8 px | 0.0415 | −60 |
+| Spec callouts | 28.5 px | 0.0663 | +60 |
+| HUD | 41.2 px | 0.0939 | +90 |
+
+The HUD moves and rotates ~2.3× the plate, and sits 150px nearer in Z. That
+spread is what makes the scene hold together as one space when the viewpoint
+moves.
+
+A centre crosshair was added to the HUD over the projection.
+
+## Two faults found and fixed during review
+
+| Fault | Cause | Fix |
+|---|---|---|
+| The heading's parallax was dead code — it never moved | `style` set a `transform` on a `motion.header`, which framer-motion overwrites every frame for its entry animation | Parallax moved to a plain `.seg-heading-rig` wrapper; the header keeps `transform` for its own animation |
+| On tall viewports the plate read as a horizontal band with flat navy above and below | A ratio-locked box at `width: 100%` cannot cover a viewport taller than its own ratio; the per-breakpoint `min-width: 225%` / `128%` overscale hacks only papered over it | `min-width: 100%` **and** `min-height: 100%` with `aspect-ratio` — the box now grows until it fills on either axis. Both hacks deleted |
+
+Cover verified at 1920×1080, 1440×900, 1024×768, 834×1112, 390×844 and
+320×568: covers on both axes every time, HUD centre stays at 52–55% / 56%.
+
+## Validation
+
+Typecheck, build and `verify:assets` (21 references, 5 awaiting supply, no
+orphans) all pass. Eleven widths from 1920 to 320: no horizontal overflow, no
+broken images, no developer text, **0 console errors** beyond the 5 known
+missing-asset 404s. Anchors clear the header; the CTA resolves to
+`#interceptor`.
+
+Reduced motion: parallax frozen (transform byte-identical before and after
+pointer movement), ring and scan animations `none`, heading at full opacity, CTA
+present, 0 errors. On a touch context the plate stays at identity `matrix3d` —
+no listener is attached at all.

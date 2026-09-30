@@ -23,7 +23,6 @@ Until a file is supplied, its slot renders a neutral ASTRA-branded panel
 | `drone1.webp` … `drone4.webp` | Advanced Aerial Systems | Converted from PNG, 1.96 MB → 133 KB |
 | `fleet/fleet-*.webp` (×8) | Mission Ready grid | Supplied 2026-09-30, 16.6 MB PNG → 1.56 MB WebP |
 | `segments/segments-hangar.webp` | Segments stage plate | 1554×1012, 2.1 MB → 204 KB |
-| `segments/segment-defence.webp` | Defence card | 1536×1024, 2.2 MB → 202 KB |
 | `../videos/hero-landing.mp4` | Hero film | 1.3 MB, desktop + full-motion only |
 
 ## Outstanding — 5 files
@@ -39,12 +38,17 @@ live in `public/assets/images/segments/`:
 | Slot | File | Source |
 |---|---|---|
 | Stage plate | `segments-hangar.webp` | backgroun image.png |
-| 01 Defence | `segment-defence.webp` | Tactical Drone Over Mountain Valley.png |
 
-ASTRA is a defence company, so the section carries a single focus.
-`Cargo Drone Over Golden Valley  .png` was installed and then removed when the
-Commercial segment was dropped; the source file is untouched if it is ever
-needed.
+The section is now a single full-viewport cinematic stage with no cards, so the
+hangar plate is its only asset. `Tactical Drone Over Mountain Valley.png` and
+`Cargo Drone Over Golden Valley  .png` were installed for the earlier card
+layout and removed with it; both source files are untouched in `Astra im/` if
+the cards ever come back.
+
+The plate covers while staying locked to the source art's 1554×1012 ratio, so
+the HUD's percentage coordinates stay valid at every viewport shape. A
+replacement plate with a different ratio needs `.seg-plate-box` and
+`.seg-hud-inner` re-checked in `src/index.css`.
 
 The plate is held at its exact 1554×1012 ratio so the HUD overlay stays
 registered on the holographic drone (51.5% / 51.4%) at any viewport. A
