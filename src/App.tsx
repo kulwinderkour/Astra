@@ -10,6 +10,7 @@ const Segments = lazy(() =>
 const DroneShowcase = lazy(() =>
   import('@/components/drone-showcase').then((m) => ({ default: m.DroneShowcase })),
 );
+import { ProofEditorial } from '@/components/proof-editorial';
 
 /**
  * Canonical image manifest. Every filename here resolves to
@@ -332,7 +333,7 @@ function Hero() {
           <RotateCcw aria-hidden="true" />
         </button>
       ) : null}
-      <a className="explore-link" href="#mission" data-testid="link-explore">Scroll down <ChevronDown aria-hidden="true" /></a>
+      <a className="explore-link" href="#aerial-systems" data-testid="link-explore">Scroll down <ChevronDown aria-hidden="true" /></a>
     </section>
   );
 }
@@ -413,72 +414,95 @@ function Interceptor() {
 }
 
 function DroneLab() {
-  const items = ['Lab design, equipment and installation', 'Hands-on workshops and FPV flight training', 'Curriculum for build, code and fly', 'Ongoing technical support'];
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.defaultMuted = true;
+      video.muted = true;
+      void video.play().catch(() => {});
+    }
+  }, []);
+
+  const items = [
+    'Lab design, equipment and installation',
+    'Hands-on workshops and FPV flight training',
+    'Curriculum for build, code and fly',
+    'Ongoing technical support'
+  ];
   return (
     <section className="lab" id="drone-lab" aria-labelledby="lab-title">
-      <div className="lab-copy"><span className="eyebrow">Institutional capability</span><h2 className="section-title" id="lab-title">Set up a <em>drone lab.</em></h2><p>We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.</p><ul className="checklist">{items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}</ul><a className="button-primary" href="#contact" data-testid="link-plan-lab">Plan your lab</a></div>
-      <div className="image-frame lab-image"><AssetImage file={imageFiles.lab} alt="Students building drones in an ASTRA drone lab" /></div>
-    </section>
-  );
-}
-
-function Recognition() {
-  const awards = [
-    ['2026', 'Startup Punjab Conclave', 'The Chief Minister of Punjab appreciated ASTRA for indigenous innovation and excellence in UAV technology.'],
-    ['Indian Army', 'Workshop and delivery', 'ASTRA ran a drone workshop and delivered high-performance drones to the Indian Army.'],
-  ];
-  return (
-    <section className="recognition" id="about" aria-labelledby="recognition-title">
-      <div className="container">
-        <SectionHeading eyebrow="Reward & recognition" title={<span id="recognition-title">Proof in the <em>field.</em></span>} />
-        <div className="recognition-grid">
-          {awards.map(([tag, title, text]) => (
-            <article className="award-card" key={title}>
-              <span className="award-tag">{tag}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </article>
-          ))}
-        </div>
+      <div className="lab-copy">
+        <span className="eyebrow">Institutional capability</span>
+        <h2 className="section-title" id="lab-title">Set up a <em>drone lab.</em></h2>
+        <p>We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.</p>
+        <ul className="checklist">
+          {items.map(item => <li key={item}><Check aria-hidden="true" />{item}</li>)}
+        </ul>
+        <a className="button-primary" href="#contact" data-testid="link-plan-lab">Plan your lab</a>
       </div>
-    </section>
-  );
-}
-
-function StoryTiles() {
-  const tiles = [
-    ['Who we are', 'Our Mission', imageFiles.mission, '#about'],
-    ['Learn to build and fly', 'Training', imageFiles.tileTraining, '#drone-lab'],
-    ['Work with us', 'Contact', imageFiles.contact, '#contact'],
-  ];
-  return (
-    <section className="story-tiles" aria-label="Explore ASTRA">
-      {tiles.map(([kicker, title, file, href]) => (
-        <article className="story-tile" key={title}>
-          <div className="image-frame"><AssetImage file={file} alt="" /></div>
-          <div className="story-copy">
-            <span className="story-kicker">{kicker}</span>
-            <h3>{title}</h3>
-            <a href={href} aria-label={`Explore ${title}`} data-testid={`link-story-${title.toLowerCase()}`}>Explore</a>
-          </div>
-        </article>
-      ))}
-    </section>
-  );
-}
-
-function Contact() {
-  return (
-    <section className="contact-band" id="contact" aria-labelledby="contact-title">
-      <div className="container contact-layout"><div><span className="eyebrow">Start a conversation</span><h2 className="section-title" id="contact-title">Talk to <em>ASTRA.</em></h2><p className="contact-copy">For product briefings, drone labs or custom builds, call or write to us.</p></div>
-        <div><div className="contact-links"><a className="contact-link" href="tel:+916239663762" data-testid="link-contact-phone"><Phone aria-hidden="true" /> +91 62396 63762</a><a className="contact-link" href="mailto:astradrobotics@gmail.com" data-testid="link-contact-email"><Mail aria-hidden="true" /> astradrobotics@gmail.com</a></div><p className="contact-address"><MapPin aria-hidden="true" />307, Top Floor, Visvesvaraya Block, Indian Institute of Technology Ropar, Rupnagar, Punjab 140001</p></div>
+      <div className="image-frame lab-image">
+        <video
+          ref={videoRef}
+          className="lab-video"
+          autoPlay
+          muted
+          playsInline
+          loop
+          preload="auto"
+          aria-label="ASTRA drone lab demonstration"
+        >
+          <source src="/assets/videos/labvideo.mp4" type="video/mp4" />
+        </video>
+        <div className="lab-video-overlay" aria-hidden="true" />
       </div>
     </section>
   );
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><a className="brand" href="#top" data-testid="link-footer-brand"><AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" /><span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span></a><div className="footer-motto" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div><p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response and surveillance.</p></div><div className="footer-columns"><div className="footer-column"><h3>Quick links</h3><a href="#about">About Us</a><a href="#segments">Our Focus</a><a href="#fleet">Products</a></div><div className="footer-column"><h3>Capability</h3><a href="#interceptor">Defence Drones</a><a href="#fleet">Platforms</a><a href="#drone-lab">Drone Lab</a></div><div className="footer-column"><h3>Get in touch</h3><a href="tel:+916239663762">+91 62396 63762</a><a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a><a href="#contact">Visit us</a></div></div></div><div className="footer-bottom"><span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span></div></div></footer>;
+  return (
+    <footer className="site-footer">
+      <div className="container">
+        <div className="footer-top">
+          <div className="footer-brand">
+            <a className="brand" href="#top" data-testid="link-footer-brand">
+              <AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" />
+              <span className="brand-lockup">
+                <span className="brand-name">ASTRA</span>
+                <span className="brand-sub">DROBOTICS</span>
+              </span>
+            </a>
+            <div className="footer-motto" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div>
+            <p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response and surveillance.</p>
+          </div>
+          <div className="footer-columns">
+            <div className="footer-column">
+              <h3>Quick links</h3>
+              <a href="#about">About Us</a>
+              <a href="#segments">Our Focus</a>
+              <a href="#fleet">Products</a>
+            </div>
+            <div className="footer-column">
+              <h3>Capability</h3>
+              <a href="#interceptor">Defence Drones</a>
+              <a href="#fleet">Platforms</a>
+              <a href="#drone-lab">Drone Lab</a>
+            </div>
+            <div className="footer-column">
+              <h3>Get in touch</h3>
+              <a href="tel:+916239663762">+91 62396 63762</a>
+              <a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a>
+              <a href="#contact">Visit us</a>
+            </div>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span>
+        </div>
+      </div>
+    </footer>
+  );
 }
 
 function LandingPage() {
@@ -491,16 +515,10 @@ function LandingPage() {
   }, []);
   return (
     <div className="astra-page">
-      <a className="skip-link" href="#mission">Skip to content</a>
+      <a className="skip-link" href="#aerial-systems">Skip to content</a>
       <Header scrolled={scrolled} />
       <main>
         <Hero />
-        <section className="mission-band" id="mission" aria-label="About ASTRA">
-          <div className="container">
-            <span className="mission-mark" aria-hidden="true" />
-            <p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response and surveillance. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p>
-          </div>
-        </section>
         <Suspense fallback={<div className="aas-stage-fallback" aria-hidden="true" />}>
           <DroneShowcase />
         </Suspense>
@@ -510,9 +528,7 @@ function LandingPage() {
         <Fleet />
         <Interceptor />
         <DroneLab />
-        <Recognition />
-        <StoryTiles />
-        <Contact />
+        <ProofEditorial />
       </main>
       <Footer />
     </div>
