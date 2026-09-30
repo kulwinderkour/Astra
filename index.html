@@ -2,19 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>ASTRA Drobotics | Made-in-India UAV & Robotics Systems</title>
-    <meta name="description" content="ASTRA Drones & Robotics Solutions builds Made-in-India UAVs, counter-UAV platforms, drone labs and robotic systems for defence, disaster response, surveillance and industry." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f1d30" />
+
+    <title>ASTRA Drobotics | Made-in-India UAV &amp; Robotics Systems</title>
+    <meta name="description" content="ASTRA Drones &amp; Robotics Solutions builds Made-in-India UAVs, counter-UAV platforms, drone labs and robotic systems for defence, disaster response, surveillance and industry." />
     <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="ASTRA Drobotics" />
+
+    <!-- Open Graph / Twitter. og:url and canonical are intentionally omitted:
+         no production domain is configured for this project yet. Add both once
+         the deployment hostname is known. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ASTRA Drobotics" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:title" content="ASTRA Drobotics | Made-in-India UAV &amp; Robotics Systems" />
     <meta property="og:description" content="Made-in-India UAVs, counter-UAV platforms, drone labs and robotic systems by ASTRA Drobotics." />
-    <meta property="og:image" content="/assets/images/logo1.png" />
-    <meta name="twitter:image" content="/assets/images/logo1.png" />
+    <meta property="og:image" content="/assets/images/hero-poster.jpg" />
+    <meta property="og:image:alt" content="An ASTRA UAV coming in to land" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ASTRA Drobotics" />
+    <meta name="twitter:title" content="ASTRA Drobotics | Made-in-India UAV &amp; Robotics Systems" />
     <meta name="twitter:description" content="Made-in-India UAVs, counter-UAV platforms, drone labs and robotic systems by ASTRA Drobotics." />
+    <meta name="twitter:image" content="/assets/images/hero-poster.jpg" />
+
     <link rel="icon" type="image/png" href="/assets/images/logo1.png" />
     <link rel="apple-touch-icon" href="/assets/images/logo1.png" />
+
+    <!-- Fonts are linked here rather than @imported from CSS so they resolve in
+         parallel with the stylesheet instead of after it. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="image" href="/assets/images/hero-poster.jpg" fetchpriority="high" />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap"
+      />
+    </noscript>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ASTRA Drones and Robotics Solutions Pvt. Ltd.",
+        "alternateName": "ASTRA Drobotics",
+        "description": "Indian deep-tech company designing and building Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry.",
+        "logo": "/assets/images/logo1.png",
+        "email": "astradrobotics@gmail.com",
+        "telephone": "+91-62396-63762",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "307, Top Floor, Visvesvaraya Block, Indian Institute of Technology Ropar",
+          "addressLocality": "Rupnagar",
+          "addressRegion": "Punjab",
+          "postalCode": "140001",
+          "addressCountry": "IN"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
