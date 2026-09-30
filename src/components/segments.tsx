@@ -30,17 +30,6 @@ const SEGMENTS = [
     alt: 'An ASTRA tactical UAV on patrol over a mountain valley at sunset, with a ground team and command vehicle on the ridge below',
     testId: 'link-defence-systems',
   },
-  {
-    number: '02',
-    tag: 'Enterprise solutions',
-    name: 'Commercial',
-    copy: 'Surveillance, mapping and inspection for enterprises.',
-    cta: 'See commercial systems',
-    href: '#fleet',
-    image: '/assets/images/segments/segment-commercial.webp',
-    alt: 'An ASTRA cargo UAV carrying a freight container over a river valley at golden hour',
-    testId: 'link-commercial-systems',
-  },
 ] as const;
 
 /** Specification callouts flanking the holographic projection. */
@@ -227,7 +216,7 @@ export function Segments() {
           transition={{ duration: 0.8, ease: [0.16, 0.8, 0.26, 1] }}
           style={layer(6)}
         >
-          <span className="eyebrow">Our segments</span>
+          <span className="eyebrow">Our focus</span>
           <h2 className="section-title" id="segments-title">
             Built for<br /><em>consequence.</em>
           </h2>
@@ -237,7 +226,7 @@ export function Segments() {
           </p>
         </motion.header>
 
-        <ul className="seg-grid" style={layer(5)}>
+        <ul className="seg-grid is-single" style={layer(5)}>
           {SEGMENTS.map((segment, index) => (
             <SegmentCard key={segment.name} segment={segment} index={index} tilt={motionOn} />
           ))}

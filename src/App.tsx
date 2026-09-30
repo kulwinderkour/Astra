@@ -386,7 +386,7 @@ function Fleet() {
         <div className="fleet-callout">
           <p className="fleet-callout-lead">Need a mission-specific platform?</p>
           <p className="fleet-callout-detail">
-            Custom configurations, payloads and support for defence, enterprise and research missions.
+            Custom configurations, payloads and support for defence, security and research missions.
           </p>
           <a className="fleet-callout-action" href="#contact" data-testid="link-talk-engineers">
             Talk to our engineers <ArrowRight aria-hidden="true" />
@@ -478,7 +478,7 @@ function Contact() {
 }
 
 function Footer() {
-  return <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><a className="brand" href="#top" data-testid="link-footer-brand"><AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" /><span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span></a><div className="footer-motto" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div><p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry.</p></div><div className="footer-columns"><div className="footer-column"><h3>Quick links</h3><a href="#about">About Us</a><a href="#segments">Our Segments</a><a href="#fleet">Products</a></div><div className="footer-column"><h3>Segments</h3><a href="#interceptor">Defence Drones</a><a href="#fleet">Commercial Drones</a><a href="#drone-lab">Drone Lab</a></div><div className="footer-column"><h3>Get in touch</h3><a href="tel:+916239663762">+91 62396 63762</a><a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a><a href="#contact">Visit us</a></div></div></div><div className="footer-bottom"><span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span></div></div></footer>;
+  return <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><a className="brand" href="#top" data-testid="link-footer-brand"><AssetImage file={imageFiles.logo} alt="ASTRA Drones and Robotics Solutions" className="brand-mark" /><span className="brand-lockup"><span className="brand-name">ASTRA</span><span className="brand-sub">DROBOTICS</span></span></a><div className="footer-motto" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम्।</div><p className="footer-about">Made-in-India drones and robotic systems for defence, disaster response and surveillance.</p></div><div className="footer-columns"><div className="footer-column"><h3>Quick links</h3><a href="#about">About Us</a><a href="#segments">Our Focus</a><a href="#fleet">Products</a></div><div className="footer-column"><h3>Capability</h3><a href="#interceptor">Defence Drones</a><a href="#fleet">Platforms</a><a href="#drone-lab">Drone Lab</a></div><div className="footer-column"><h3>Get in touch</h3><a href="tel:+916239663762">+91 62396 63762</a><a href="mailto:astradrobotics@gmail.com">astradrobotics@gmail.com</a><a href="#contact">Visit us</a></div></div></div><div className="footer-bottom"><span>© 2026 Astra Drones and Robotics Solutions Pvt. Ltd. All rights reserved.</span></div></div></footer>;
 }
 
 function LandingPage() {
@@ -498,7 +498,7 @@ function LandingPage() {
         <section className="mission-band" id="mission" aria-label="About ASTRA">
           <div className="container">
             <span className="mission-mark" aria-hidden="true" />
-            <p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response, surveillance and industry. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p>
+            <p>ASTRA Drones &amp; Robotics Solutions is an Indian deep-tech company that designs and builds Made-in-India drones and robotic systems for defence, disaster response and surveillance. We reduce dependence on imported UAVs with affordable, modular, field-ready systems and local support.</p>
           </div>
         </section>
         <Suspense fallback={<div className="aas-stage-fallback" aria-hidden="true" />}>

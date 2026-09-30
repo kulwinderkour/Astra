@@ -712,3 +712,42 @@ resolve to their existing targets (`#interceptor`, `#fleet`).
 
 **Outstanding assets: 7 → 5** (`interceptor`, `drone-lab`, and the three story
 tiles).
+
+---
+
+# Addendum 4 — Defence-only positioning
+
+ASTRA is a defence company, so all commercial/enterprise positioning was removed
+site-wide, not just from the Segments card.
+
+| Location | Before | After |
+|---|---|---|
+| Segments | Two cards: 01 Defence, 02 Commercial | Single Defence panel |
+| Segments eyebrow | "Our segments" | "Our focus" |
+| Fleet callout | "defence, enterprise and research missions" | "defence, security and research missions" |
+| Footer column | "Segments": Defence / Commercial Drones / Drone Lab | "Capability": Defence Drones / Platforms / Drone Lab |
+| Footer quick link | "Our Segments" | "Our Focus" |
+| Footer blurb | "...surveillance and industry." | "...disaster response and surveillance." |
+| Mission band | "...surveillance and industry." | "...disaster response and surveillance." |
+| `index.html` meta description | "...surveillance and industry." | "...disaster response and surveillance." |
+| `index.html` JSON-LD | "...surveillance and industry." | "...disaster response and surveillance." |
+
+`grep -inE "commercial|enterprise"` over `src/` and `index.html` returns nothing.
+
+**Layout.** A lone card sitting in a 2-up grid reads as a gap where something
+was deleted, so `.seg-grid.is-single` gives the panel full width and splits it
+horizontally — media left (57.5%), copy right, vertically centred. The meta bar
+is pinned to the media column edge (`right: calc(42.5% + 12px)`), verified
+aligned at 1440, 834 and 390. Below 768px it stacks as before.
+
+`segment-commercial.webp` was deleted since nothing references it; the source
+original in `Astra im/` is untouched.
+
+**Left alone deliberately:** the eight Mission Ready platforms. Logistics,
+Surveillance, VTOL and Training are dual-use defence platforms, not a commercial
+product line — removing them would gut the fleet. Say the word if any should go.
+
+Re-verified: typecheck and build pass, `verify:assets` clean (22 references, 5
+awaiting supply, no orphans). 11 widths from 1920 to 320 — no overflow, no
+broken images, no developer text, 0 console errors beyond the 5 known 404s.
+Anchors clear the header; the Defence CTA still resolves to `#interceptor`.

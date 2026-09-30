@@ -24,7 +24,6 @@ Until a file is supplied, its slot renders a neutral ASTRA-branded panel
 | `fleet/fleet-*.webp` (×8) | Mission Ready grid | Supplied 2026-09-30, 16.6 MB PNG → 1.56 MB WebP |
 | `segments/segments-hangar.webp` | Segments stage plate | 1554×1012, 2.1 MB → 204 KB |
 | `segments/segment-defence.webp` | Defence card | 1536×1024, 2.2 MB → 202 KB |
-| `segments/segment-commercial.webp` | Commercial card | 1536×1024, 2.5 MB → 303 KB |
 | `../videos/hero-landing.mp4` | Hero film | 1.3 MB, desktop + full-motion only |
 
 ## Outstanding — 5 files
@@ -41,7 +40,11 @@ live in `public/assets/images/segments/`:
 |---|---|---|
 | Stage plate | `segments-hangar.webp` | backgroun image.png |
 | 01 Defence | `segment-defence.webp` | Tactical Drone Over Mountain Valley.png |
-| 02 Commercial | `segment-commercial.webp` | Cargo Drone Over Golden Valley  .png |
+
+ASTRA is a defence company, so the section carries a single focus.
+`Cargo Drone Over Golden Valley  .png` was installed and then removed when the
+Commercial segment was dropped; the source file is untouched if it is ever
+needed.
 
 The plate is held at its exact 1554×1012 ratio so the HUD overlay stays
 registered on the holographic drone (51.5% / 51.4%) at any viewport. A

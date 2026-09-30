@@ -541,6 +541,30 @@
 @media (min-width: 768px) {
   .seg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
   .seg-spec { display: block; }
+
+  /* ASTRA is defence-only, so this section carries a single focus. A lone card
+     in a 2-up grid reads as a gap where something was deleted; the panel goes
+     full width and splits media/copy horizontally instead. */
+  .seg-grid.is-single { grid-template-columns: 1fr; }
+  .seg-grid.is-single .seg-card-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+    align-items: stretch;
+    gap: 0;
+  }
+  .seg-grid.is-single .seg-card-media { aspect-ratio: auto; min-height: 420px; }
+  .seg-grid.is-single .seg-card-meta { right: calc(42.5% + 12px); left: 26px; width: auto; }
+  .seg-grid.is-single .seg-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 36px;
+  }
+  .seg-grid.is-single .seg-card-body p { max-width: 400px; font-size: 16px; }
+}
+@media (min-width: 1080px) {
+  .seg-grid.is-single .seg-card-media { min-height: 500px; }
+  .seg-grid.is-single .seg-card-body { padding: 52px 52px; }
 }
 @media (min-width: 768px) and (max-width: 1079px) {
   .seg-plate-box { min-width: 128%; }
