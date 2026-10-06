@@ -325,7 +325,6 @@ function Interceptor() {
       </div>
 
       <div className="interceptor-copy">
-        <span className="eyebrow">Featured platform</span>
         <h2 className="section-title" id="interceptor-title">Interceptor <em>Drone</em></h2>
         <p className="lead">A vertical-launch counter-UAV platform built to find, track and neutralise hostile drones.</p>
         <dl className="spec-grid">
