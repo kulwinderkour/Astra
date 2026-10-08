@@ -241,7 +241,6 @@ function Hero() {
         </video>
       ) : null}
       <div className="hero-scrim" aria-hidden="true" />
-      <span className={`hero-label ${visible ? 'is-visible' : ''}`} aria-hidden="true">INDIGENOUS SYSTEMS / FIELD READY</span>
       <div className="hero-content">
         <div className={`motto-lockup ${visible ? 'is-visible' : ''}`}>
           <h1 className="motto-sanskrit" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम् ।</h1>
