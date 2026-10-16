@@ -8,9 +8,9 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 export const DRONE_LAB_CONFIG = {
   heading: 'Set up a drone lab.',
   intro:
-    'We build drone and robotics labs inside  schools, colleges and institutions, then train students and staff to run them.',
+    'We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.',
   sentencePrefix: 'We run a school. We want a small lab where students can ',
-  sentenceMid: '. We need help with ',
+  sentenceMid: 'We need help with ',
   sentenceSuffix: '.',
   phraseA: [
     'learn to fly FPV',
@@ -48,7 +48,7 @@ export function DroneLab() {
 
   const phraseA = DRONE_LAB_CONFIG.phraseA[indexA];
   const phraseB = DRONE_LAB_CONFIG.phraseB[indexB];
-  const currentSentence = `${DRONE_LAB_CONFIG.sentencePrefix}${phraseA}${DRONE_LAB_CONFIG.sentenceMid}${phraseB}${DRONE_LAB_CONFIG.sentenceSuffix}`;
+  const currentSentence = `${DRONE_LAB_CONFIG.sentencePrefix}${phraseA}. ${DRONE_LAB_CONFIG.sentenceMid}${phraseB}${DRONE_LAB_CONFIG.sentenceSuffix}`;
 
   // Screen reader accessible sentence: updates on initial load or lock toggle
   const [accessibleSentence, setAccessibleSentence] = useState(currentSentence);
@@ -144,8 +144,6 @@ export function DroneLab() {
 
             <p className="drone-lab-sentence" aria-hidden="true">
               <span>{DRONE_LAB_CONFIG.sentencePrefix}</span>
-
-              {/* Rotating Phrase A */}
               <button
                 type="button"
                 className={`phrase-slot ${isLockedA ? 'is-locked' : ''}`}
@@ -167,7 +165,7 @@ export function DroneLab() {
                       exit={reducedMotion ? undefined : { y: '-100%', opacity: 0 }}
                       transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
                     >
-                      {phraseA}
+                      {phraseA}<span className="phrase-punct">.</span>
                     </motion.span>
                   </AnimatePresence>
                 </motion.span>
@@ -188,11 +186,8 @@ export function DroneLab() {
                     }
                   }}
                 />
-              </button>
-
+              </button>{' '}
               <span>{DRONE_LAB_CONFIG.sentenceMid}</span>
-
-              {/* Rotating Phrase B */}
               <button
                 type="button"
                 className={`phrase-slot ${isLockedB ? 'is-locked' : ''}`}
@@ -214,7 +209,7 @@ export function DroneLab() {
                       exit={reducedMotion ? undefined : { y: '-100%', opacity: 0 }}
                       transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
                     >
-                      {phraseB}
+                      {phraseB}<span className="phrase-punct">{DRONE_LAB_CONFIG.sentenceSuffix}</span>
                     </motion.span>
                   </AnimatePresence>
                 </motion.span>
@@ -237,8 +232,6 @@ export function DroneLab() {
                   }}
                 />
               </button>
-
-              <span>{DRONE_LAB_CONFIG.sentenceSuffix}</span>
             </p>
           </div>
         </div>

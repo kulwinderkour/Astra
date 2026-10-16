@@ -1485,14 +1485,16 @@
   display: grid;
   grid-template-columns: 1fr;
   width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 @media (min-width: 900px) {
   .drone-lab-layout {
-    grid-template-columns: 52% 48%;
+    grid-template-columns: minmax(0, 54%) minmax(0, 46%);
     align-items: stretch;
-    min-height: 660px;
+    min-height: 640px;
   }
 }
 
@@ -1500,54 +1502,73 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 64px 24px 72px;
+  padding: 56px 20px 64px;
   position: relative;
   z-index: 2;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 @media (min-width: 640px) {
   .drone-lab-content {
-    padding-inline: 48px;
+    padding: 64px 36px 72px;
   }
 }
 
 @media (min-width: 900px) {
   .drone-lab-content {
-    padding: 100px clamp(32px, 5vw, 84px) 100px clamp(24px, 4vw, 72px);
+    padding: 80px clamp(24px, 3vw, 56px) 80px clamp(24px, 3.5vw, 60px);
   }
 }
 
+.drone-lab-header {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .drone-lab-heading {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   color: #ffffff;
   font-family: var(--app-font-mono), 'Montserrat', sans-serif;
   font-weight: 800;
-  font-size: clamp(44px, 5.2vw, 76px);
-  line-height: 0.98;
+  font-size: clamp(40px, 4.8vw, 66px);
+  line-height: 1.05;
   letter-spacing: -0.015em;
   text-transform: none; /* Sentence case: no small caps, no colored words */
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 .drone-lab-intro {
-  margin: 0 0 44px;
+  margin: 0 0 clamp(24px, 2.8vw, 36px);
   color: #8e9aa8;
   font-family: var(--app-font-sans), 'Montserrat', sans-serif;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 1.55;
-  max-width: 540px;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.65;
+  max-width: 580px;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 /* The brief sentence (main typographic design element) */
 .drone-lab-sentence-box {
   position: relative;
-  min-height: 140px;
+  min-height: 160px;
   margin-bottom: 0;
+  width: 100%;
+  max-width: 680px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
   .drone-lab-sentence-box {
-    min-height: 220px;
+    min-height: 200px;
   }
 }
 
@@ -1555,10 +1576,14 @@
   color: #e9edf3;
   font-family: var(--app-font-mono), 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: clamp(30px, 3.5vw, 48px);
-  line-height: 1.25;
+  font-size: clamp(25px, 3vw, 42px);
+  line-height: 1.34;
   letter-spacing: -0.01em;
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 /* Rotating phrase interactive slots */
@@ -1566,8 +1591,10 @@
   display: inline-block;
   vertical-align: baseline;
   position: relative;
-  padding: 0 2px 4px 2px;
-  margin: 0 2px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 0 3px 0;
+  margin: 0;
   color: #e8731a;
   background: transparent;
   border: none;
@@ -1576,6 +1603,7 @@
   font: inherit;
   outline: none;
   line-height: inherit;
+  overflow-wrap: break-word;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -1589,13 +1617,28 @@
   overflow: hidden;
   vertical-align: bottom;
   position: relative;
-  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
 }
 
 .phrase-text {
   display: inline-block;
   color: #e8731a;
-  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: normal;
+  text-align: left;
+}
+
+.phrase-punct {
+  display: inline-block;
+  color: #e9edf3;
+  font-family: inherit;
+  font-weight: 700;
+  vertical-align: baseline;
+  user-select: none;
 }
 
 /* 2px orange underline timer */
@@ -1603,7 +1646,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
+  right: 0.3em;
   height: 2px;
   background: rgba(232, 115, 26, 0.22);
   pointer-events: none;
@@ -1613,7 +1656,8 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
+  right: 0.3em;
+  width: auto;
   height: 2px;
   background: #e8731a;
   transform-origin: left;
@@ -1635,25 +1679,6 @@
 
 .phrase-slot.is-locked .phrase-timer-track {
   background: #e8731a;
-}
-
-/* Screens up to 600px: each rotating phrase sits on its own line */
-@media (max-width: 600px) {
-  .drone-lab-sentence .phrase-slot {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-  }
-  .phrase-anim-wrap {
-    display: block;
-    width: 100%;
-    white-space: normal;
-  }
-  .phrase-text {
-    display: block;
-    white-space: normal;
-    word-break: break-word;
-  }
 }
 
 
