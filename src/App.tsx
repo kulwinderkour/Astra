@@ -23,7 +23,7 @@ import { Fleet } from '@/components/fleet-section';
  */
 const imageFiles = {
   logo: 'logo1.png',
-  poster: 'hero-poster.jpg',
+  poster: 'hero-poster-aerospace.jpg',
   interceptor: 'interceptor.jpg',
   lab: 'drone-lab.jpg',
   mission: 'tile-mission.jpg',
@@ -237,11 +237,11 @@ function Hero() {
           aria-hidden="true"
           tabIndex={-1}
         >
-          <source src="/assets/videos/hero-landing.mp4" type="video/mp4" />
+          <source src="/assets/video/Aerospace_drone_hero_video_prompt_20261015134353.mp4" type="video/mp4" />
+          <source src="/assets/videos/Aerospace_drone_hero_video_prompt_20261015134353.mp4" type="video/mp4" />
         </video>
       ) : null}
       <div className="hero-scrim" aria-hidden="true" />
-      <span className={`hero-label ${visible ? 'is-visible' : ''}`} aria-hidden="true">INDIGENOUS SYSTEMS / FIELD READY</span>
       <div className="hero-content">
         <div className={`motto-lockup ${visible ? 'is-visible' : ''}`}>
           <h1 className="motto-sanskrit" lang="sa">राष्ट्रबलस्य मूलं स्वदेशी विज्ञानम् ।</h1>

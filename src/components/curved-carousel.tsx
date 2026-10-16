@@ -21,48 +21,84 @@ export interface CarouselSlide {
  */
 export const CAROUSEL_SLIDES: CarouselSlide[] = [
   {
-    src: '/assets/images/image1.png',
-    chipLeft: '01 / FIELD PROOF',
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.38 AM.jpeg',
+    chipLeft: '01 / FIELD VALIDATION',
     chipRight: 'LAT 30.9894° N // ELEV 260M',
-    title: 'Army drone demonstration',
-    subtitle: 'Field demo at sunset, Unit 21',
-    caption: 'Tactical field demonstration and sovereign payload validation with military leadership.',
+    title: 'Tactical Multirotor Deployment',
+    subtitle: 'Autonomous payload validation in field conditions',
+    caption: 'Indigenous tactical multirotor platform undergoing rigorous flight endurance, sensor payload calibration, and telemetry validation in field environments.',
   },
   {
-    src: '/assets/images/image2.png',
-    chipLeft: '02 / SYSTEM DEVELOPMENT',
-    chipRight: 'AWARD // STATE CONCLAVE',
-    title: 'Punjab State Technology Award',
-    subtitle: 'Honored by the Chief Minister of Punjab',
-    caption: 'State recognition for indigenous aerospace innovation and high-reliability UAV architecture.',
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.38 AM (1).jpeg',
+    chipLeft: '02 / INSTITUTIONAL',
+    chipRight: 'DST GOVT OF INDIA // DEEP-TECH',
+    title: 'TDB National Deep-Tech Pitch',
+    subtitle: 'Department of Science & Technology, Govt. of India',
+    caption: 'ASTRA presenting sovereign aerospace platforms and autonomous defense robotics during the Technology Development Board 30th Foundation national session.',
   },
   {
-    src: '/assets/images/image3.png',
-    chipLeft: '03 / ENGINEERING',
-    chipRight: 'AVIONICS RIG // HANGAR-01',
-    title: 'UCAV Sensor Integration',
-    subtitle: 'Sensor integration in the hangar',
-    caption: 'Hardware-in-the-loop avionics testing, optical payload calibration, and airframe assembly.',
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.38 AM (2).jpeg',
+    chipLeft: '03 / STRATEGIC ALLIANCE',
+    chipRight: 'MOU SIGNING // DEFENCE LABS',
+    title: 'Aerospace Academy MoU Signing',
+    subtitle: 'Institutional robotics lab & training initiative',
+    caption: 'Bilateral agreement formalizing advanced robotics lab establishment and tactical pilot curriculum with Sandeepni Gurukul.',
   },
   {
-    src: '/assets/images/image4.png',
-    chipLeft: '04 / OPERATIONS',
-    chipRight: 'IIT ROPAR // VISVESVARAYA',
-    title: 'ADRAL Lab, IIT Ropar',
-    subtitle: 'Autonomous drone research and assembly lab',
-    caption: 'Sovereign robotics R&D facility, embedded telemetry programming, and pilot simulators.',
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.39 AM.jpeg',
+    chipLeft: '04 / DEFENCE BRIEFING',
+    chipRight: 'INDIAN ARMY // COMMAND EVALUATION',
+    title: 'Armed Forces Technical Evaluation',
+    subtitle: 'Briefing senior army leadership on indigenous airframes',
+    caption: 'Technical review of sovereign fixed-wing and hybrid VTOL tactical reconnaissance UAVs with senior Indian Army commanders.',
   },
   {
-    src: '/assets/images/image5.png',
-    chipLeft: '05 / DEPLOYMENT',
-    chipRight: 'HIGH ALTITUDE // MIL-SPEC',
-    title: 'High-Altitude Tactical Drone',
-    subtitle: 'Tactical drone over snow',
-    caption: 'Sub-zero operational deployment, extreme-altitude endurance, and contested airspace navigation.',
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.39 AM (1).jpeg',
+    chipLeft: '05 / COUNTER-UAS',
+    chipRight: 'AVIONICS RIG // HIGH-VELOCITY',
+    title: 'Kinetic Interceptor Airframe Review',
+    subtitle: 'Close-quarters assessment of counter-drone hardware',
+    caption: "Military leadership inspecting ASTRA's high-speed interceptor prototype engineered for contested airspace interdiction and swarm neutralization.",
+  },
+  {
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.41 AM.jpeg',
+    chipLeft: '06 / SOVEREIGN AVIONICS',
+    chipRight: 'SECURE LINK // TELEM ACTIVE',
+    title: 'Tactical Drone Architecture Review',
+    subtitle: 'Hands-on evaluation of sovereign flight systems',
+    caption: 'Demonstration of encrypted telemetry links, rapid-swap payload bays, and sovereign flight computer architecture for defense deployments.',
+  },
+  {
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.41 AM (1).jpeg',
+    chipLeft: '07 / R&D VALIDATION',
+    chipRight: 'IIT ROPAR LABS // DEFENCE VISIT',
+    title: 'Defence Delegation Lab Assessment',
+    subtitle: 'Autonomous fleet demonstration at IIT Ropar R&D center',
+    caption: 'Armed forces delegation conducting technical inspections of multi-role UAV platforms and autonomous navigation telemetry at the ASTRA lab.',
+  },
+  {
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.42 AM.jpeg',
+    chipLeft: '08 / JOINT SERVICES',
+    chipRight: 'ARMY & AIR FORCE // FLIGHT DECK',
+    title: 'Tri-Service Tactical Demonstration',
+    subtitle: 'Presentation to Indian Army & Indian Air Force leadership',
+    caption: "Joint military delegation examining ASTRA's aerodynamic airframe geometry, low radar cross-section profiles, and tactical flight readiness.",
+  },
+  {
+    src: '/assets/images/collabs/WhatsApp Image 2026-10-14 at 12.38.44 AM.jpeg',
+    chipLeft: '09 / FIELD CAPACITY',
+    chipRight: 'FIELD WORKSHOP // NATIONAL DEFENCE',
+    title: 'Armed Forces Technical Workshop',
+    subtitle: 'Capacity building & tactical drone workshop for defense personnel',
+    caption: 'Specialized training workshop and technical briefing conducted for Indian Army and Air Force personnel on next-generation UAV deployment.',
   },
 ];
 
-export function CurvedCarousel() {
+interface CurvedCarouselProps {
+  slides?: CarouselSlide[];
+}
+
+export function CurvedCarousel({ slides = CAROUSEL_SLIDES }: CurvedCarouselProps = {}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -73,7 +109,7 @@ export function CurvedCarousel() {
   const dragStartX = useRef(0);
   const [isGrabbed, setIsGrabbed] = useState(false);
 
-  const totalSlides = CAROUSEL_SLIDES.length;
+  const totalSlides = slides.length;
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
@@ -241,7 +277,7 @@ export function CurvedCarousel() {
     return diff;
   };
 
-  const activeSlide = CAROUSEL_SLIDES[currentIndex];
+  const activeSlide = slides[currentIndex];
 
   return (
     <div
@@ -262,7 +298,7 @@ export function CurvedCarousel() {
       {/* 3D Cylinder Stage */}
       <div className="curved-carousel-viewport">
         <div className="curved-carousel-stage">
-          {CAROUSEL_SLIDES.map((slide, index) => {
+          {slides.map((slide, index) => {
             const pos = getSlidePosition(index);
             const isCenter = pos === 0;
             const isLeft = pos === -1;
@@ -338,7 +374,7 @@ export function CurvedCarousel() {
       <div className="curved-controls-row">
         {/* Horizontal Slider / Scrubber */}
         <div className="curved-slider-bar-container" role="group" aria-label="Horizontal slide scrubber">
-          <span className="curved-slider-label">0{currentIndex + 1}</span>
+          <span className="curved-slider-label">{String(currentIndex + 1).padStart(2, '0')}</span>
           <div className="curved-slider-track-wrap">
             <div className="curved-slider-track">
               <div
@@ -346,7 +382,7 @@ export function CurvedCarousel() {
                 style={{ width: `${(currentIndex / (totalSlides - 1)) * 100}%` }}
               />
               <div className="curved-slider-ticks" aria-hidden="true">
-                {CAROUSEL_SLIDES.map((_, i) => (
+                {slides.map((_, i) => (
                   <span
                     key={i}
                     className={`curved-slider-tick ${i === currentIndex ? 'is-active' : ''} ${i <= currentIndex ? 'is-passed' : ''}`}
@@ -367,7 +403,7 @@ export function CurvedCarousel() {
               aria-label="Slide scrubber slider"
             />
           </div>
-          <span className="curved-slider-total">0{totalSlides}</span>
+          <span className="curved-slider-total">{String(totalSlides).padStart(2, '0')}</span>
         </div>
 
         <div className="curved-nav-pill" role="group" aria-label="Carousel navigation">
@@ -392,7 +428,7 @@ export function CurvedCarousel() {
 
         {/* Minimal indicator dots */}
         <div className="curved-dots-row" aria-hidden="true">
-          {CAROUSEL_SLIDES.map((_, idx) => (
+          {slides.map((_, idx) => (
             <button
               key={idx}
               type="button"

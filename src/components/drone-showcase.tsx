@@ -156,28 +156,30 @@ function PlatformSlide({
   const zIndex = useTransform(t, (v) => (v > 0.001 && v < 0.999 ? 2 : 1));
   const stageOpacity = useTransform(t, [0, 0.04 * enterAt, 0.9 * exitAt, 1 * exitAt], [enterAt ? 0 : 1, 1, 1, 0]);
 
+  const vAmp = amp === 0 ? 0.55 : amp;
+
   // ── Image: reveal -> shift aside -> push forward in depth -> recede ──
   const imgOpacity = useTransform(t, [0, 0.16 * enterAt, 0.86 * exitAt, 0.99 * exitAt], [enterAt ? 0 : 1, 1, 1, 0]);
-  const imgScale = useTransform(t, [0, 0.2, 0.46, 0.62, 1 * exitAt], [0.92, 1, 1.05, 1.03, 0.96]);
+  const imgScale = useTransform(t, [0, 0.2, 0.46, 0.62, 1 * exitAt], [0.94, 1, 1.04, 1.02, 0.96]);
   const imgY = useTransform(
     t,
     [0, 0.2, 0.46, 0.62, 1 * exitAt],
-    [46 * amp, 0, -14 * amp, -8 * amp, -38 * amp],
+    [36 * vAmp, 0, -12 * vAmp, -6 * vAmp, -30 * vAmp],
   );
   const imgX = useTransform(t, [0.2, 0.46, 0.62], [0, -26 * amp, -20 * amp]);
-  const imgRotateY = useTransform(t, [0.2, 0.46, 0.62, 1 * exitAt], [0, 5 * amp, 2.5 * amp, 0]);
-  const imgRotateZ = useTransform(t, [0.2, 0.46, 0.62], [0, -1.6 * amp, -0.8 * amp]);
+  const imgRotateY = useTransform(t, [0.2, 0.46, 0.62, 1 * exitAt], [0, 4.5 * amp, 2 * amp, 0]);
+  const imgRotateZ = useTransform(t, [0.2, 0.46, 0.62], [0, -1.4 * amp, -0.6 * amp]);
 
   // ── Information layer: emerges from behind the image, then settles ──
   const infoOpacity = useTransform(t, [0.2, 0.38, 0.86 * exitAt, 0.97 * exitAt], [0, 1, 1, 0]);
-  const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [58 * amp, 6 * amp, 0, -18 * amp]);
-  const infoX = useTransform(t, [0.2, 0.42, 0.62], [-22 * amp, 6 * amp, 0]);
-  const infoScale = useTransform(t, [0.2, 0.42, 0.62], [0.96, 1.005, 1]);
-  const infoRotateY = useTransform(t, [0.2, 0.42, 0.62], [-6 * amp, -1.5 * amp, 0]);
+  const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [42 * vAmp, 5 * vAmp, 0, -16 * vAmp]);
+  const infoX = useTransform(t, [0.2, 0.42, 0.62], [-20 * amp, 5 * amp, 0]);
+  const infoScale = useTransform(t, [0.2, 0.42, 0.62], [0.97, 1.004, 1]);
+  const infoRotateY = useTransform(t, [0.2, 0.42, 0.62], [-5 * amp, -1.2 * amp, 0]);
 
   // Specs trail the panel very slightly so the block assembles rather than pops.
   const specsOpacity = useTransform(t, [0.32, 0.5, 0.86 * exitAt, 0.96 * exitAt], [0, 1, 1, 0]);
-  const specsY = useTransform(t, [0.32, 0.54], [22 * amp, 0]);
+  const specsY = useTransform(t, [0.32, 0.54], [16 * vAmp, 0]);
 
   return (
     <motion.article className="aas-slide" style={{ opacity: stageOpacity, zIndex }}>
@@ -245,11 +247,19 @@ function DroneShowcaseAnimated() {
   const [amp, setAmp] = useState(1);
 
   useEffect(() => {
-    const narrow = window.matchMedia('(max-width: 899px)');
-    const update = () => setAmp(narrow.matches ? 0.45 : 1);
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 600) {
+        setAmp(0);
+      } else if (w < 900) {
+        setAmp(0.35);
+      } else {
+        setAmp(1);
+      }
+    };
     update();
-    narrow.addEventListener('change', update);
-    return () => narrow.removeEventListener('change', update);
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
   }, []);
 
   const { scrollYProgress } = useScroll({
