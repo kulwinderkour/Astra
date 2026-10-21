@@ -23,7 +23,8 @@ export interface DronePlatform {
   specs: DroneSpec[];
   fit?: 'cover' | 'contain';
   objectPosition?: string;
-  useDualLayer?: boolean;
+  imageScale?: number;
+  useBgBlur?: boolean;
 }
 
 const FLEET_CATEGORIES = ['Attack', 'Counter-UAV', 'Logistics', 'Training'] as const;
@@ -63,7 +64,7 @@ const FLEET_DATA: DronePlatform[] = [
       { label: 'SPEED', value: '180 km/h' },
     ],
   },
-  {
+  { 
     id: 'fiber-optic-drone',
     number: '07',
     name: 'Fibre Optic Drone',
@@ -97,7 +98,9 @@ const FLEET_DATA: DronePlatform[] = [
       { label: 'INTERCEPT', value: 'AUTONOMOUS' },
     ],
     fit: 'cover',
-    objectPosition: 'center 22%',
+    objectPosition: 'center 18%',
+    imageScale: 0.88,
+    useBgBlur: true,
   },
 
   // ── Logistics Category ──
@@ -139,7 +142,7 @@ const FLEET_DATA: DronePlatform[] = [
       { label: 'WEIGHT', value: '420 g' },
     ],
     fit: 'cover',
-    objectPosition: 'center 32%',
+    objectPosition: 'center 38%',
   },
 ];
 
@@ -236,14 +239,15 @@ function BentoCard({
       }
       data-testid={`card-fleet-${platform.id}`}
     >
-      {/* Background Image with Slow Zoom & Dual-Layer Framing */}
-      <div className={`bento-image-wrapper ${platform.fit === 'contain' ? 'is-contained' : ''}`}>
-        {platform.useDualLayer && (
+      {/* Background Image with Slow Zoom */}
+      <div className="bento-image-wrapper">
+        {platform.useBgBlur && (
           <img
             src={platform.image}
             alt=""
             aria-hidden="true"
-            className="bento-image-backdrop"
+            className="bento-image-bg-blur"
+            style={platform.objectPosition ? { objectPosition: platform.objectPosition } : undefined}
           />
         )}
         <img
@@ -252,8 +256,11 @@ function BentoCard({
           loading="lazy"
           width="1584"
           height="993"
-          className={`bento-image ${platform.fit === 'contain' ? 'fit-contain' : ''}`}
-          style={platform.objectPosition ? { objectPosition: platform.objectPosition } : undefined}
+          className="bento-image"
+          style={{
+            ...(platform.objectPosition ? { objectPosition: platform.objectPosition } : {}),
+            ...(platform.imageScale ? { transform: `scale(${isHovered ? platform.imageScale * 1.04 : platform.imageScale})` } : {}),
+          }}
         />
         <div className="bento-gradient" aria-hidden="true" />
       </div>
