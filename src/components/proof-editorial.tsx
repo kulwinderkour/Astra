@@ -89,6 +89,8 @@ export function ProofEditorial() {
 
   return (
     <section className="proof-editorial" id="about" aria-labelledby="proof-title">
+
+
       {/* Blueprint & technical background matrix */}
       <div className="proof-bg-grid" aria-hidden="true" />
       <div className="proof-bg-vignette" aria-hidden="true" />

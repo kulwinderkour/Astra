@@ -2673,7 +2673,35 @@
   transform: translateX(3px);
 }
 
-.site-footer { padding: 70px 0 24px; background: var(--background); color: var(--white); }
+.site-footer {
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  padding: 70px 0 24px;
+  background: var(--background);
+  color: var(--white);
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle 380px at 80% 45%, rgba(255, 255, 255, 0.035) 0%, transparent 70%),
+    radial-gradient(circle 420px at 15% 30%, rgba(232, 115, 26, 0.035) 0%, transparent 65%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 50%, transparent 100%);
+}
+
+.site-footer .container {
+  position: relative;
+  z-index: 2;
+}
 .footer-top { display: grid; gap: 48px; padding-bottom: 60px; }
 .footer-brand { display: grid; gap: 22px; max-width: 310px; }
 .footer-motto { font: 400 25px/1.45 var(--app-font-serif); }
