@@ -300,6 +300,7 @@ function Interceptor() {
           loop
           playsInline
           preload="metadata"
+          poster="/assets/images/Drones/final drone6.jpeg"
           aria-label="ASTRA Interceptor drone flight demonstration"
         >
           <source src="/assets/video/interceptor.mp4" type="video/mp4" />

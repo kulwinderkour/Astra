@@ -46,8 +46,8 @@ const PLATFORMS: Platform[] = [
   {
     id: '01',
     src: '/assets/images/drone1.webp',
-    w: 960,
-    h: 1280,
+    w: 1145,
+    h: 622,
     title: 'Aerial Surveillance',
     role: 'Persistent ISR',
     description:
@@ -78,8 +78,8 @@ const PLATFORMS: Platform[] = [
   {
     id: '03',
     src: '/assets/images/drone3.webp',
-    w: 291,
-    h: 287,
+    w: 1145,
+    h: 622,
     title: 'Precision FPV',
     role: 'Low latency',
     description:
@@ -89,13 +89,13 @@ const PLATFORMS: Platform[] = [
       ['Role', 'Close-range precision'],
       ['Link', 'Low-latency FPV'],
     ],
-    cutout: true,
+    cutout: false,
   },
   {
     id: '04',
     src: '/assets/images/drone4.webp',
-    w: 299,
-    h: 303,
+    w: 1145,
+    h: 622,
     title: 'Heavy Payload',
     role: 'Logistics lift',
     description:
@@ -105,7 +105,7 @@ const PLATFORMS: Platform[] = [
       ['Role', 'Payload transport'],
       ['Lift', 'Heavy class'],
     ],
-    cutout: true,
+    cutout: false,
   },
 ];
 
@@ -195,7 +195,12 @@ function PlatformSlide({
           rotateZ: imgRotateZ,
         }}
       >
-        <img src={platform.src} alt={platform.alt} draggable={false} />
+        <img
+          src={platform.src}
+          alt={platform.alt}
+          className={`aas-img aas-img-${platform.id}`}
+          draggable={false}
+        />
         <span className="aas-media-rule" aria-hidden="true" />
       </motion.div>
 
@@ -339,7 +344,12 @@ function DroneShowcaseStatic() {
                 className={`aas-media ${platform.cutout ? 'is-cutout' : 'is-photo'}`}
                 style={{ aspectRatio: `${platform.w} / ${platform.h}` }}
               >
-                <img src={platform.src} alt={platform.alt} draggable={false} />
+                <img
+                  src={platform.src}
+                  alt={platform.alt}
+                  className={`aas-img aas-img-${platform.id}`}
+                  draggable={false}
+                />
                 <span className="aas-media-rule" aria-hidden="true" />
               </div>
               <div className="aas-info">

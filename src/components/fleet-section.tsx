@@ -16,14 +16,17 @@ export interface DronePlatform {
   number: string;
   name: string;
   tag: string;
-  category: 'Attack' | 'Surveillance' | 'Logistics' | 'Training';
+  category: 'Attack' | 'Counter-UAV' | 'Logistics' | 'Training';
   detail: string;
   image: string;
   alt: string;
   specs: DroneSpec[];
+  fit?: 'cover' | 'contain';
+  objectPosition?: string;
+  useDualLayer?: boolean;
 }
 
-const FLEET_CATEGORIES = ['Attack', 'Surveillance', 'Logistics', 'Training'] as const;
+const FLEET_CATEGORIES = ['Attack', 'Counter-UAV', 'Logistics', 'Training'] as const;
 type FleetCategory = (typeof FLEET_CATEGORIES)[number];
 
 const FLEET_DATA: DronePlatform[] = [
@@ -34,9 +37,9 @@ const FLEET_DATA: DronePlatform[] = [
     name: 'FPV Drone',
     tag: 'Tactical FPV',
     category: 'Attack',
-    detail: 'High-speed, agile, low-latency tactical platform engineered for frontline precision.',
+    detail: 'Carbon-fibre FPV racing/freestyle frame (FlyFishRC Volador II). High-speed, agile, low-latency tactical platform engineered for frontline precision.',
     image: '/assets/images/Drones/drone-3.png',
-    alt: 'ASTRA tactical high-speed FPV drone',
+    alt: 'ASTRA tactical high-speed FPV drone (FlyFishRC Volador II frame)',
     specs: [
       { label: 'RANGE', value: '12 km' },
       { label: 'SPEED', value: '160 km/h' },
@@ -50,7 +53,7 @@ const FLEET_DATA: DronePlatform[] = [
     name: 'Kamikaze Drone',
     tag: 'Precision Strike',
     category: 'Attack',
-    detail: 'Precision strike loitering munition with autonomous terminal lock on targets.',
+    detail: 'Olive-green FPV-style airframe with custom printed body. Precision strike loitering munition with autonomous terminal lock on targets.',
     image: '/assets/images/Drones/final drone5.jpeg',
     alt: 'ASTRA precision strike loitering munition platform',
     specs: [
@@ -66,7 +69,7 @@ const FLEET_DATA: DronePlatform[] = [
     name: 'Fibre Optic Drone',
     tag: 'Secure Fibre',
     category: 'Attack',
-    detail: 'Unbroken tethered optical link guaranteeing zero EW interference in contested zones.',
+    detail: 'Tiny micro-class quad with high-resolution camera. Unbroken tethered optical link guaranteeing zero EW interference in contested zones.',
     image: '/assets/images/Drones/drone-2.png',
     alt: 'ASTRA micro tactical drone deploying secure fiber link',
     specs: [
@@ -77,54 +80,24 @@ const FLEET_DATA: DronePlatform[] = [
     ],
   },
 
-  // ── Surveillance Category ──
+  // ── Counter-UAV Category ──
   {
-    id: 'surveillance-drone',
-    number: '04',
-    name: 'Surveillance Drone',
-    tag: 'Tactical ISR',
-    category: 'Surveillance',
-    detail: 'Day and night aerial reconnaissance with real-time encrypted intelligence feeds.',
-    image: '/assets/images/Drones/final drone7.jpeg',
-    alt: 'ASTRA tactical multirotor field surveillance UAV',
-    specs: [
-      { label: 'RANGE', value: '40 km' },
-      { label: 'ENDURANCE', value: '180 min' },
-      { label: 'CEILING', value: '4,500 m' },
-      { label: 'SENSOR', value: 'EO / IR' },
-    ],
-  },
-  {
-    id: 'unjammable-drone',
-    number: '02',
-    name: 'Unjammable Drone',
-    tag: 'Anti-jam EW',
-    category: 'Surveillance',
-    detail: 'Multi-constellation anti-spoofing and visual odometry for GPS-denied environments.',
-    image: '/assets/images/Drones/drone-1.png',
-    alt: 'ASTRA jam-resistant tactical hexacopter',
-    specs: [
-      { label: 'RANGE', value: '30 km' },
-      { label: 'NAVIGATION', value: 'GPS-DENIED' },
-      { label: 'ENDURANCE', value: '55 min' },
-      { label: 'PAYLOAD', value: '3.5 kg' },
-    ],
-  },
-  {
-    id: 'vtol-drone',
+    id: 'interceptor-drone',
     number: '06',
-    name: 'VTOL Drone',
-    tag: 'Hybrid VTOL',
-    category: 'Surveillance',
-    detail: 'Runway-independent vertical takeoff combined with high-speed aerodynamic flight.',
-    image: '/assets/images/Drones/final drone6.jpeg',
-    alt: 'ASTRA vertical takeoff and landing interceptor aircraft',
+    name: 'Interceptor Drone',
+    tag: 'Kinetic Interceptor',
+    category: 'Counter-UAV',
+    detail: 'Rocket-shaped tail-sitter with a camera in the nose and four motors, engineered for vertical launch and hostile drone neutralisation.',
+    image: '/assets/images/drone1.webp',
+    alt: 'ASTRA rocket-shaped tail-sitter kinetic interceptor drone',
     specs: [
-      { label: 'RANGE', value: '65 km' },
-      { label: 'ENDURANCE', value: '120 min' },
-      { label: 'CRUISE', value: '95 km/h' },
-      { label: 'TAKEOFF', value: 'VERTICAL' },
+      { label: 'LAUNCH', value: 'VERTICAL' },
+      { label: 'ROLE', value: 'COUNTER-UAV' },
+      { label: 'SPEED', value: '200+ km/h' },
+      { label: 'INTERCEPT', value: 'AUTONOMOUS' },
     ],
+    fit: 'cover',
+    objectPosition: 'center 22%',
   },
 
   // ── Logistics Category ──
@@ -154,7 +127,7 @@ const FLEET_DATA: DronePlatform[] = [
     name: 'Training Drone',
     tag: 'Pilot Training',
     category: 'Training',
-    detail: 'High-durability crash-resilient airframe built for institutional pilot simulation and flight certification.',
+    detail: 'Fully ducted, guarded props on a cinewhoop-style frame, suited for crash-resilient institutional pilot simulation and flight certification.',
     image: '/assets/images/Drones/drone-4.png',
     alt: 'ASTRA ducted 360 pilot training drone',
     specs: [
@@ -165,6 +138,8 @@ const FLEET_DATA: DronePlatform[] = [
       { label: 'SPEED', value: '85 km/h' },
       { label: 'WEIGHT', value: '420 g' },
     ],
+    fit: 'cover',
+    objectPosition: 'center 32%',
   },
 ];
 
@@ -261,15 +236,24 @@ function BentoCard({
       }
       data-testid={`card-fleet-${platform.id}`}
     >
-      {/* Background Image with Slow Zoom */}
-      <div className="bento-image-wrapper">
+      {/* Background Image with Slow Zoom & Dual-Layer Framing */}
+      <div className={`bento-image-wrapper ${platform.fit === 'contain' ? 'is-contained' : ''}`}>
+        {platform.useDualLayer && (
+          <img
+            src={platform.image}
+            alt=""
+            aria-hidden="true"
+            className="bento-image-backdrop"
+          />
+        )}
         <img
           src={platform.image}
           alt={platform.alt}
           loading="lazy"
           width="1584"
           height="993"
-          className="bento-image"
+          className={`bento-image ${platform.fit === 'contain' ? 'fit-contain' : ''}`}
+          style={platform.objectPosition ? { objectPosition: platform.objectPosition } : undefined}
         />
         <div className="bento-gradient" aria-hidden="true" />
       </div>
@@ -335,7 +319,7 @@ export function Fleet() {
   const [activeCategory, setActiveCategory] = useState<FleetCategory>('Attack');
   const reducedMotion = useReducedMotion();
 
-  // Support Deep-Linking with URL Hash (#attack, #surveillance, #logistics, #training)
+  // Support Deep-Linking with URL Hash (#attack, #counter-uav, #logistics, #training)
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.toLowerCase().replace('#', '');
@@ -386,12 +370,12 @@ export function Fleet() {
           {/* Slim Stats Strip with Count-Up Numbers */}
           <div className="fleet-stats-strip">
             <div className="fleet-stat-item">
-              <CountUp end={8} />
+              <CountUp end={FLEET_DATA.length} />
               <span className="stat-label">Platforms</span>
             </div>
             <div className="fleet-stat-sep" aria-hidden="true" />
             <div className="fleet-stat-item">
-              <CountUp end={4} />
+              <CountUp end={FLEET_CATEGORIES.length} />
               <span className="stat-label">Mission Roles</span>
             </div>
             <div className="fleet-stat-sep" aria-hidden="true" />
