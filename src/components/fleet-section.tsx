@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ShinyText } from './ui/shiny-text';
 
 /**
  * FLEET DATA CONFIGURATION
@@ -359,10 +360,15 @@ export function Fleet() {
             <div className="fleet-title-wrapper">
               <div className="fleet-eyebrow-row">
                 <span className="fleet-eyebrow-line" aria-hidden="true" />
-                <span className="fleet-eyebrow-text">Our Fleet</span>
+                <span className="fleet-eyebrow-text">
+                  <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Our Fleet</ShinyText>
+                </span>
               </div>
               <h2 className="fleet-heading-text" id="fleet-title">
-                MISSION <span className="fleet-ready-accent">READY.</span>
+                <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>MISSION</ShinyText>{' '}
+                <span className="fleet-ready-accent">
+                  <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>READY.</ShinyText>
+                </span>
               </h2>
             </div>
 

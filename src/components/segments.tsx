@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ShinyText } from './ui/shiny-text';
 
 /**
  * SEGMENTS — "Built for consequence"
@@ -137,9 +138,14 @@ export function Segments() {
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.8, ease: [0.16, 0.8, 0.26, 1] }}
           >
-            <span className="eyebrow">Our focus</span>
+            <span className="eyebrow">
+              <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Our focus</ShinyText>
+            </span>
             <h2 className="section-title" id="segments-title">
-              Built for<br /><em>consequence.</em>
+              <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>Built for</ShinyText><br />
+              <em>
+                <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>consequence.</ShinyText>
+              </em>
             </h2>
             <p className="seg-lede">
               From contested airspace to critical infrastructure, ASTRA builds dependable

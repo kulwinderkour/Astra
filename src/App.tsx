@@ -13,6 +13,7 @@ const DroneShowcase = lazy(() =>
 import { ProofEditorial } from '@/components/proof-editorial';
 import { DroneLab } from '@/components/drone-lab';
 import { Fleet } from '@/components/fleet-section';
+import { ShinyText } from '@/components/ui/shiny-text';
 
 /**
  * Canonical image manifest. Every filename here resolves to
@@ -326,7 +327,12 @@ function Interceptor() {
       </div>
 
       <div className="interceptor-copy">
-        <h2 className="section-title" id="interceptor-title">Interceptor <em>Drone</em></h2>
+        <h2 className="section-title" id="interceptor-title">
+          <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>Interceptor</ShinyText>{' '}
+          <em>
+            <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Drone</ShinyText>
+          </em>
+        </h2>
         <p className="lead">A vertical-launch counter-UAV platform built to find, track and neutralise hostile drones.</p>
         <dl className="spec-grid">
           {specs.map(([label, value]) => (

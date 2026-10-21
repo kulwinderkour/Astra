@@ -1,5 +1,6 @@
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import { CurvedCarousel } from './curved-carousel';
+import { ShinyText } from './ui/shiny-text';
 
 interface ProofItem {
   id: string;
@@ -99,13 +100,18 @@ export function ProofEditorial() {
         {/* Editorial Section Introduction */}
         <header className="proof-intro">
           <div className="proof-intro-meta">
-            <span className="proof-eyebrow">WHO WE ARE</span>
+            <span className="proof-eyebrow">
+              <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>WHO WE ARE</ShinyText>
+            </span>
             <span className="proof-code" aria-hidden="true">SEC. 04 / SOVEREIGN AEROSPACE</span>
           </div>
 
           <div className="proof-heading-lockup">
             <h2 className="proof-title" id="proof-title">
-              PROOF IN THE <span className="proof-title-accent">FIELD.</span>
+              <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>PROOF IN THE</ShinyText>{' '}
+              <span className="proof-title-accent">
+                <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>FIELD.</ShinyText>
+              </span>
             </h2>
             <p className="proof-lead">
               ASTRA engineers indigenous unmanned aerial systems, counter-UAV interceptors, and tactical robotics built to withstand contested airspace. Field-tested, military-validated, and deployed with national institutions.

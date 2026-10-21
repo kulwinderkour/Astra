@@ -7,6 +7,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion';
+import { ShinyText } from './ui/shiny-text';
 
 /**
  * ADVANCED AERIAL SYSTEMS
@@ -290,9 +291,14 @@ function DroneShowcaseAnimated() {
         <div className="aas-grid-bg" aria-hidden="true" />
 
         <motion.header className="aas-heading" style={{ opacity: headingOpacity, y: headingY }}>
-          <span className="eyebrow">Platforms</span>
+          <span className="eyebrow">
+            <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Platforms</ShinyText>
+          </span>
           <h2 className="section-title">
-            Advanced <em>aerial systems</em>
+            <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>Advanced</ShinyText>{' '}
+            <em>
+              <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>aerial systems</ShinyText>
+            </em>
           </h2>
           <p className="aas-lede">
             Engineered aerial platforms for surveillance, defence, logistics and mission-critical operations.
@@ -329,9 +335,14 @@ function DroneShowcaseStatic() {
     <section className="aas is-static" id="aerial-systems" aria-label="Advanced aerial systems">
       <div className="aas-static-inner">
         <header className="aas-heading">
-          <span className="eyebrow">Platforms</span>
+          <span className="eyebrow">
+            <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Platforms</ShinyText>
+          </span>
           <h2 className="section-title">
-            Advanced <em>aerial systems</em>
+            <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>Advanced</ShinyText>{' '}
+            <em>
+              <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>aerial systems</ShinyText>
+            </em>
           </h2>
           <p className="aas-lede">
             Engineered aerial platforms for surveillance, defence, logistics and mission-critical operations.

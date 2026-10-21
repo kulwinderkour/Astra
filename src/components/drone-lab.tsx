@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ShinyText } from './ui/shiny-text';
 
 /**
  * CONFIGURATION
@@ -124,7 +125,7 @@ export function DroneLab() {
         <div className="drone-lab-content">
           <header className="drone-lab-header">
             <h2 className="drone-lab-heading" id="lab-title">
-              {DRONE_LAB_CONFIG.heading}
+              <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>{DRONE_LAB_CONFIG.heading}</ShinyText>
             </h2>
             <p className="drone-lab-intro">{DRONE_LAB_CONFIG.intro}</p>
           </header>
