@@ -165,7 +165,7 @@ function PlatformSlide({
   const imgY = useTransform(
     t,
     [0, 0.2, 0.46, 0.62, 1 * exitAt],
-    [36 * vAmp, 0, -12 * vAmp, -6 * vAmp, -30 * vAmp],
+    [0, 0, -10 * vAmp, -4 * vAmp, -24 * vAmp],
   );
   const imgX = useTransform(t, [0.2, 0.46, 0.62], [0, -26 * amp, -20 * amp]);
   const imgRotateY = useTransform(t, [0.2, 0.46, 0.62, 1 * exitAt], [0, 4.5 * amp, 2 * amp, 0]);
@@ -173,7 +173,7 @@ function PlatformSlide({
 
   // ── Information layer: emerges from behind the image, then settles ──
   const infoOpacity = useTransform(t, [0.2, 0.38, 0.86 * exitAt, 0.97 * exitAt], [0, 1, 1, 0]);
-  const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [42 * vAmp, 5 * vAmp, 0, -16 * vAmp]);
+  const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [12 * vAmp, 0, 0, -16 * vAmp]);
   const infoX = useTransform(t, [0.2, 0.42, 0.62], [-20 * amp, 5 * amp, 0]);
   const infoScale = useTransform(t, [0.2, 0.42, 0.62], [0.97, 1.004, 1]);
   const infoRotateY = useTransform(t, [0.2, 0.42, 0.62], [-5 * amp, -1.2 * amp, 0]);
