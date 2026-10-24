@@ -135,6 +135,7 @@ function PlatformSlide({
   index,
   progress,
   amp,
+  isMobile,
   isFirst,
   isLast,
 }: {
@@ -142,6 +143,7 @@ function PlatformSlide({
   index: number;
   progress: MotionValue<number>;
   amp: number;
+  isMobile: boolean;
   isFirst: boolean;
   isLast: boolean;
 }) {
@@ -171,15 +173,19 @@ function PlatformSlide({
   const imgRotateY = useTransform(t, [0.2, 0.46, 0.62, 1 * exitAt], [0, 4.5 * amp, 2 * amp, 0]);
   const imgRotateZ = useTransform(t, [0.2, 0.46, 0.62], [0, -1.4 * amp, -0.6 * amp]);
 
-  // ── Information layer: emerges from behind the image, then settles ──
-  const infoOpacity = useTransform(t, [0.2, 0.38, 0.86 * exitAt, 0.97 * exitAt], [0, 1, 1, 0]);
+  // ── Information layer: on mobile, stays visible with image to avoid empty gaps ──
+  const desktopInfoOpacity = useTransform(t, [0.2, 0.38, 0.86 * exitAt, 0.97 * exitAt], [0, 1, 1, 0]);
+  const mobileInfoOpacity = useTransform(t, [0, 0.08 * enterAt, 0.88 * exitAt, 0.99 * exitAt], [enterAt ? 0 : 1, 1, 1, 0]);
+  const infoOpacity = isMobile ? mobileInfoOpacity : desktopInfoOpacity;
+
   const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [12 * vAmp, 0, 0, -16 * vAmp]);
   const infoX = useTransform(t, [0.2, 0.42, 0.62], [-20 * amp, 5 * amp, 0]);
   const infoScale = useTransform(t, [0.2, 0.42, 0.62], [0.97, 1.004, 1]);
   const infoRotateY = useTransform(t, [0.2, 0.42, 0.62], [-5 * amp, -1.2 * amp, 0]);
 
   // Specs trail the panel very slightly so the block assembles rather than pops.
-  const specsOpacity = useTransform(t, [0.32, 0.5, 0.86 * exitAt, 0.96 * exitAt], [0, 1, 1, 0]);
+  const desktopSpecsOpacity = useTransform(t, [0.32, 0.5, 0.86 * exitAt, 0.96 * exitAt], [0, 1, 1, 0]);
+  const specsOpacity = isMobile ? mobileInfoOpacity : desktopSpecsOpacity;
   const specsY = useTransform(t, [0.32, 0.54], [16 * vAmp, 0]);
 
   return (
@@ -251,10 +257,13 @@ function RailMarker({ platform, index, progress }: { platform: Platform; index: 
 function DroneShowcaseAnimated() {
   const stageRef = useRef<HTMLElement>(null);
   const [amp, setAmp] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth;
+      const mobile = w < 900;
+      setIsMobile(mobile);
       if (w < 600) {
         setAmp(0);
       } else if (w < 900) {
@@ -290,7 +299,10 @@ function DroneShowcaseAnimated() {
       <div className="aas-sticky">
         <div className="aas-grid-bg" aria-hidden="true" />
 
-        <motion.header className="aas-heading" style={{ opacity: headingOpacity, y: headingY }}>
+        <motion.header
+          className="aas-heading"
+          style={isMobile ? undefined : { opacity: headingOpacity, y: headingY }}
+        >
           <span className="eyebrow">
             <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Platforms</ShinyText>
           </span>
@@ -313,6 +325,7 @@ function DroneShowcaseAnimated() {
               index={index}
               progress={progress}
               amp={amp}
+              isMobile={isMobile}
               isFirst={index === 0}
               isLast={index === PLATFORMS.length - 1}
             />

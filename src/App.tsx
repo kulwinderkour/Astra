@@ -191,15 +191,15 @@ function Hero() {
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const wide = window.matchMedia('(min-width: 768px)');
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    const shouldVideo = wide.matches && !motion.matches && !connection?.saveData;
+    const shouldVideo = !motion.matches && !connection?.saveData;
     setUseVideo(shouldVideo);
 
     const video = videoRef.current;
     if (video) {
       video.defaultMuted = true;
       video.muted = true;
+      video.playsInline = true;
       void video.play().catch(() => {});
     }
 
@@ -235,6 +235,12 @@ function Hero() {
           preload="auto"
           poster={`/assets/images/${imageFiles.poster}`}
           onEnded={() => setEnded(true)}
+          onLoadedMetadata={() => {
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              void videoRef.current.play().catch(() => {});
+            }
+          }}
           aria-hidden="true"
           tabIndex={-1}
         >
