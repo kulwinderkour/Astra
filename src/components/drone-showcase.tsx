@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  AnimatePresence,
   motion,
   useReducedMotion,
   useScroll,
@@ -178,7 +179,8 @@ function PlatformSlide({
   const mobileInfoOpacity = useTransform(t, [0, 0.08 * enterAt, 0.88 * exitAt, 0.99 * exitAt], [enterAt ? 0 : 1, 1, 1, 0]);
   const infoOpacity = isMobile ? mobileInfoOpacity : desktopInfoOpacity;
 
-  const infoY = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [12 * vAmp, 0, 0, -16 * vAmp]);
+  const infoYDesktop = useTransform(t, [0.2, 0.42, 0.62, 1 * exitAt], [12 * vAmp, 0, 0, -16 * vAmp]);
+  const infoY = isMobile ? 0 : infoYDesktop;
   const infoX = useTransform(t, [0.2, 0.42, 0.62], [-20 * amp, 5 * amp, 0]);
   const infoScale = useTransform(t, [0.2, 0.42, 0.62], [0.97, 1.004, 1]);
   const infoRotateY = useTransform(t, [0.2, 0.42, 0.62], [-5 * amp, -1.2 * amp, 0]);
@@ -186,7 +188,8 @@ function PlatformSlide({
   // Specs trail the panel very slightly so the block assembles rather than pops.
   const desktopSpecsOpacity = useTransform(t, [0.32, 0.5, 0.86 * exitAt, 0.96 * exitAt], [0, 1, 1, 0]);
   const specsOpacity = isMobile ? mobileInfoOpacity : desktopSpecsOpacity;
-  const specsY = useTransform(t, [0.32, 0.54], [16 * vAmp, 0]);
+  const specsYDesktop = useTransform(t, [0.32, 0.54], [16 * vAmp, 0]);
+  const specsY = isMobile ? 0 : specsYDesktop;
 
   return (
     <motion.article className="aas-slide" style={{ opacity: stageOpacity, zIndex }}>
@@ -221,8 +224,11 @@ function PlatformSlide({
           rotateY: infoRotateY,
         }}
       >
-        <span className="aas-info-index" aria-hidden="true">{platform.id}</span>
-        <span className="aas-info-role">{platform.role}</span>
+        <div className="aas-info-kicker">
+          <span className="aas-info-index" aria-hidden="true">{platform.id}</span>
+          <span className="aas-info-divider" aria-hidden="true">/</span>
+          <span className="aas-info-role">{platform.role}</span>
+        </div>
         <h3>{platform.title}</h3>
         <p>{platform.description}</p>
         <motion.dl className="aas-specs" style={{ opacity: specsOpacity, y: specsY }}>
@@ -257,7 +263,9 @@ function RailMarker({ platform, index, progress }: { platform: Platform; index: 
 function DroneShowcaseAnimated() {
   const stageRef = useRef<HTMLElement>(null);
   const [amp, setAmp] = useState(1);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 900 : false));
+  const [activeMobileIndex, setActiveMobileIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () => {
@@ -277,6 +285,24 @@ function DroneShowcaseAnimated() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+    if (diff > 45) {
+      // Swiped left -> Next platform
+      setActiveMobileIndex((prev) => (prev < PLATFORMS.length - 1 ? prev + 1 : 0));
+    } else if (diff < -45) {
+      // Swiped right -> Previous platform
+      setActiveMobileIndex((prev) => (prev > 0 ? prev - 1 : PLATFORMS.length - 1));
+    }
+    setTouchStart(null);
+  };
+
   const { scrollYProgress } = useScroll({
     target: stageRef,
     offset: ['start start', 'end end'],
@@ -294,6 +320,110 @@ function DroneShowcaseAnimated() {
   const headingOpacity = useTransform(progress, [0, 0.03, 0.09], [1, 0.9, 0]);
   const headingY = useTransform(progress, [0, 0.09], [0, -26]);
 
+  // ── Mobile layout: natural height, ends immediately after pagination ──
+  if (isMobile) {
+    const currentPlatform = PLATFORMS[activeMobileIndex];
+    return (
+      <section className="aas is-mobile-view" id="aerial-systems" aria-label="Advanced aerial systems">
+        <div className="aas-mobile-inner">
+          <header className="aas-heading">
+            <span className="eyebrow">
+              <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Platforms</ShinyText>
+            </span>
+            <h2 className="section-title">
+              <ShinyText color="#b5b5b5" shineColor="#ffffff" speed={2.5}>Advanced</ShinyText>{' '}
+              <em>
+                <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>aerial systems</ShinyText>
+              </em>
+            </h2>
+            <p className="aas-lede">
+              Engineered aerial platforms for surveillance, defence, logistics and mission-critical operations.
+            </p>
+          </header>
+
+          <div
+            className="aas-stage is-mobile"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <AnimatePresence mode="wait">
+              <motion.article
+                key={currentPlatform.id}
+                className="aas-slide is-mobile"
+                initial={{ opacity: 0, x: 14 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -14 }}
+                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className={`aas-media ${currentPlatform.cutout ? 'is-cutout' : 'is-photo'}`}>
+                  <img
+                    src={currentPlatform.src}
+                    alt={currentPlatform.alt}
+                    className={`aas-img aas-img-${currentPlatform.id}`}
+                    draggable={false}
+                  />
+                  <span className="aas-media-rule" aria-hidden="true" />
+                </div>
+
+                <div className="aas-info">
+                  <div className="aas-info-kicker">
+                    <span className="aas-info-index" aria-hidden="true">{currentPlatform.id}</span>
+                    <span className="aas-info-divider" aria-hidden="true">/</span>
+                    <span className="aas-info-role">{currentPlatform.role}</span>
+                  </div>
+                  <h3>{currentPlatform.title}</h3>
+                  <p>{currentPlatform.description}</p>
+                  <dl className="aas-specs">
+                    {currentPlatform.specs.map(([label, value]) => (
+                      <div key={label}>
+                        <dt>{label}</dt>
+                        <dd>{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </motion.article>
+            </AnimatePresence>
+          </div>
+
+          <ul className="aas-rail is-mobile" aria-label="Aerial systems pagination">
+            {PLATFORMS.map((platform, index) => {
+              const isActive = index === activeMobileIndex;
+              return (
+                <li
+                  key={platform.id}
+                  className={`aas-rail-item ${isActive ? 'is-active' : ''}`}
+                  onClick={() => setActiveMobileIndex(index)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Select platform ${platform.id}: ${platform.title}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setActiveMobileIndex(index);
+                    }
+                  }}
+                >
+                  <span className="aas-rail-id">{platform.id}</span>
+                  <span className="aas-rail-track">
+                    <span
+                      className="aas-rail-fill"
+                      style={{
+                        transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
+                        transition: 'transform 0.28s ease',
+                      }}
+                    />
+                  </span>
+                  <span className="aas-rail-title">{platform.title}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    );
+  }
+
+  // ── Desktop layout: existing scroll-controlled sticky cinematic sequence ──
   return (
     <section ref={stageRef} className="aas" id="aerial-systems" aria-label="Advanced aerial systems">
       <div className="aas-sticky">
@@ -301,7 +431,7 @@ function DroneShowcaseAnimated() {
 
         <motion.header
           className="aas-heading"
-          style={isMobile ? undefined : { opacity: headingOpacity, y: headingY }}
+          style={{ opacity: headingOpacity, y: headingY }}
         >
           <span className="eyebrow">
             <ShinyText color="#E8731A" shineColor="#FFCCA0" speed={2.5}>Platforms</ShinyText>
@@ -325,7 +455,7 @@ function DroneShowcaseAnimated() {
               index={index}
               progress={progress}
               amp={amp}
-              isMobile={isMobile}
+              isMobile={false}
               isFirst={index === 0}
               isLast={index === PLATFORMS.length - 1}
             />

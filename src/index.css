@@ -570,16 +570,20 @@
 /* Content sits above the stage. */
 .seg-content { position: relative; z-index: 2; perspective: 1500px; perspective-origin: 52% 46%; }
 .seg-heading-rig { transform-style: preserve-3d; will-change: transform; }
-.seg-heading { max-width: 560px; will-change: transform; }
+.seg-heading { max-width: min(100%, 780px); will-change: transform; }
 .seg-heading .section-title {
   margin-top: 14px;
   color: var(--white);
   font-weight: 800;
-  font-size: clamp(42px, 6.8vw, 90px);
-  line-height: .92;
+  font-size: clamp(26px, 5.2vw, 76px);
+  line-height: .98;
   letter-spacing: -0.015em;
 }
-.seg-heading .section-title em { color: var(--saffron); font-style: normal; }
+.seg-heading .section-title em {
+  color: var(--saffron);
+  font-style: normal;
+  white-space: nowrap;
+}
 .seg-cta {
   display: inline-flex;
   align-items: center;
@@ -990,7 +994,7 @@
     grid-column: span 1 !important;
     width: 100% !important;
     height: auto !important;
-    min-height: 480px;
+    min-height: auto;
   }
   .hero-specs-banner {
     grid-column: span 1 !important;
@@ -1004,12 +1008,12 @@
     gap: 12px;
   }
 
-  /* Bento Card Mobile Layout: Drone on top, information below without overlap */
+  /* Bento Card Mobile Layout: Drone prominent on top, information below without empty gap */
   .bento-card {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 480px;
+    height: auto;
+    min-height: auto;
     border-radius: 6px;
     background: rgba(8, 14, 23, 0.95);
   }
@@ -1017,7 +1021,7 @@
     position: relative;
     inset: auto;
     width: 100%;
-    height: 250px;
+    height: 220px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -1028,10 +1032,15 @@
   .bento-image {
     width: 100%;
     height: 100%;
-    object-fit: contain !important;
-    padding: 44px 20px 12px !important;
+    object-fit: cover !important;
+    object-position: center 48% !important;
+    padding: 0 !important;
     transform: none !important;
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.75));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
+  }
+  [data-testid="card-fleet-logistics-drone"] .bento-image {
+    object-fit: contain !important;
+    padding: 20px 14px 6px !important;
   }
   .bento-image-bg-blur {
     display: none;
@@ -1061,12 +1070,12 @@
   .bento-bottom-content {
     position: relative;
     inset: auto;
-    flex: 1;
+    flex: initial;
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    padding: 14px 18px 18px;
+    padding: 14px 16px 16px;
     background: rgba(8, 14, 23, 0.98);
   }
   .bento-title,
@@ -1098,9 +1107,10 @@
     font-size: 9.5px;
   }
   .bento-action-btn {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 2px;
+    width: 38px;
+    height: 38px;
+    margin-top: 2px;
+    flex-shrink: 0;
   }
 }
 
@@ -3254,19 +3264,48 @@
   display: none;
 }
 
+.aas-info-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.aas-info-divider {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+}
+
 /* Mobile layout for Advanced Aerial Systems */
 @media (max-width: 899px) {
-  .aas {
-    height: 380vh;
+  .aas,
+  .aas.is-mobile-view,
+  .aas-stage-fallback {
+    height: auto !important;
+    min-height: auto !important;
+    padding: clamp(32px, 5vw, 44px) 0 clamp(20px, 3.5vw, 28px) !important;
+    overflow: visible !important;
   }
   .aas-sticky {
-    padding-top: calc(82px + 12px);
-    padding-bottom: 16px;
-    justify-content: flex-start;
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .aas-mobile-inner {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
   }
   .aas-heading {
-    width: min(100% - 32px, 540px);
-    margin-bottom: 6px;
+    width: min(100% - 32px, 520px);
+    margin: 0 auto;
+    flex-shrink: 0;
     pointer-events: auto;
   }
   .aas-heading .eyebrow {
@@ -3274,67 +3313,152 @@
     letter-spacing: 0.16em;
   }
   .aas-heading .section-title {
-    font-size: clamp(20px, 5.2vw, 26px);
+    font-size: clamp(20px, 5vw, 25px);
     margin-top: 2px;
-    line-height: 1.1;
+    line-height: 1.12;
   }
   .aas-lede {
     display: none;
   }
-  .aas-stage {
-    margin-top: 8px;
-    width: min(100% - 32px, 540px);
+  .aas-stage.is-mobile {
+    width: min(100% - 32px, 520px);
+    margin: 12px auto 0;
+    display: flex;
+    flex-direction: column;
+    perspective: none;
   }
-  .aas-slide {
-    gap: 10px;
+  .aas-slide.is-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    transform-style: flat;
   }
   .aas-media {
-    max-width: min(100%, 390px);
+    max-width: min(100%, 420px);
+    max-height: clamp(160px, 26vh, 210px);
     aspect-ratio: 16 / 9;
-    height: auto;
+    width: 100%;
+    margin: 0 auto;
+    object-fit: contain;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .aas-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .aas-info {
-    max-width: min(100%, 390px);
-    padding-left: 12px;
-    border-left: 2px solid rgba(232, 115, 26, 0.75);
+    max-width: min(100%, 420px);
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 14px;
+    border-left: 2px solid rgba(232, 115, 26, 0.6);
+  }
+  .aas-info-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
   }
   .aas-info-index {
     font-size: 12px;
+    font-weight: 800;
+    color: var(--saffron);
+  }
+  .aas-info-divider {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 11px;
   }
   .aas-info-role {
     font-size: 11px;
-    margin-top: 1px;
+    font-weight: 600;
+    color: var(--sand);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
   .aas-info h3 {
-    font-size: clamp(19px, 4.6vw, 23px);
-    margin: 2px 0 0;
+    font-size: clamp(18px, 4.4vw, 22px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 2px 0 6px;
+    color: #ffffff;
+    letter-spacing: 0.02em;
   }
   .aas-info p {
     font-size: 12.5px;
-    line-height: 1.45;
-    margin: 3px 0 0;
-    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    margin: 0 0 8px;
+    color: rgba(255, 255, 255, 0.74);
+    max-width: 420px;
   }
   .aas-specs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4px 14px;
-    margin: 6px 0 0;
-    padding-top: 6px;
+    gap: 6px 18px;
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
   .aas-specs dt {
     font-size: 10.5px;
+    color: var(--sand);
+    letter-spacing: 0.12em;
   }
   .aas-specs dd {
-    font-size: 13px;
-    margin-top: 1px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 2px;
   }
-  .aas-rail {
-    margin-top: 10px;
-    width: min(100% - 32px, 540px);
+  .aas-rail.is-mobile {
+    margin: 16px auto 0;
+    width: min(100% - 32px, 520px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
+    list-style: none;
+    padding: 0;
   }
-  .aas-rail-id {
-    font-size: 10.5px;
+  .aas-rail.is-mobile .aas-rail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px 4px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .aas-rail.is-mobile .aas-rail-id {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--app-font-mono);
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.2s ease;
+  }
+  .aas-rail.is-mobile .aas-rail-item.is-active .aas-rail-id {
+    color: var(--saffron);
+  }
+  .aas-rail.is-mobile .aas-rail-track {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+  .aas-rail.is-mobile .aas-rail-fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--saffron);
+    transform-origin: left;
+  }
+  .aas-rail.is-mobile .aas-rail-title {
+    display: none;
   }
 }
 

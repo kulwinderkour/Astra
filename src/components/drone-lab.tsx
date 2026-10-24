@@ -10,8 +10,8 @@ export const DRONE_LAB_CONFIG = {
   heading: 'Set up a drone lab.',
   intro:
     'We build drone and robotics labs inside schools, colleges and institutions, then train students and staff to run them.',
-  sentencePrefix: 'We run a school. We want a small lab where students can ',
-  sentenceMid: 'We need help with ',
+  sentencePrefix: 'You run a school and want a small lab where students can ',
+  sentenceMid: 'You need help with ',
   sentenceSuffix: '.',
   phraseA: [
     'learn to fly FPV',
