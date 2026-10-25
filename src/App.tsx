@@ -200,13 +200,14 @@ function Hero() {
       video.defaultMuted = true;
       video.muted = true;
       video.playsInline = true;
+      video.playbackRate = 1.2;
       void video.play().catch(() => {});
     }
 
-    // Strictly reveal all hero texts only after 3.0s
+    // Strictly reveal all hero texts only after 2.5s
     const timer = window.setTimeout(() => {
       setVisible(true);
-    }, 3000);
+    }, 2500);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -217,9 +218,10 @@ function Hero() {
     setVisible(false);
     if (video) {
       video.currentTime = 0;
+      video.playbackRate = 1.2;
       void video.play().catch(() => {});
     }
-    window.setTimeout(() => setVisible(true), 3000);
+    window.setTimeout(() => setVisible(true), 2500);
   };
 
   return (
@@ -238,6 +240,7 @@ function Hero() {
           onLoadedMetadata={() => {
             if (videoRef.current) {
               videoRef.current.muted = true;
+              videoRef.current.playbackRate = 1.2;
               void videoRef.current.play().catch(() => {});
             }
           }}
