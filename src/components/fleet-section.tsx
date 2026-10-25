@@ -122,6 +122,8 @@ const FLEET_DATA: DronePlatform[] = [
       { label: 'ENDURANCE', value: '45 min' },
       { label: 'SPEED', value: '65 km/h' },
     ],
+    fit: 'cover',
+    objectPosition: 'center 42%',
   },
 
   // ── Training Category ──

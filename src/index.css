@@ -1490,11 +1490,6 @@
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
   }
 
-  [data-testid="card-fleet-logistics-drone"] .bento-image {
-    object-fit: contain !important;
-    padding: 16px 12px 6px !important;
-  }
-
   .bento-image-bg-blur {
     display: none;
   }
